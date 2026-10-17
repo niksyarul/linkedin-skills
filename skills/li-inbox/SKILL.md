@@ -18,6 +18,11 @@ what is worth writing.
 The user pastes the messages. Screenshots are fine. Do not log into their
 account or read their inbox with a browser tool.
 
+Start with `python3 outreach.py due` (in the `/li-dm` folder) and list the
+follow-ups due today above the triage. When a pasted reply comes from someone
+in the ledger, record it with `outreach.py "Their Name" replied`, so they stop
+showing up as due.
+
 ## Sort into five
 
 | bucket | signal | action |
@@ -57,7 +62,8 @@ does not owe a reply to a script.
 ## Output
 
 Grouped by bucket, counts first, drafts only for the buckets that get replies,
-each one humanized. Then the gate: the user sends them.
+each one humanized. The message being answered is the provenance context file
+for its reply. Then the gate: the user sends them.
 
 ```
 INBOX  ·  52 items  ·  3 LEAD, 2 RECRUITER, 4 PEER, 2 ASK, 41 SPAM

@@ -16,6 +16,11 @@ posted it.
 
 ## Before you write
 
+0. Read `~/.claude/linkedin/plan.md` if it exists and its `week_of` is this
+   week. If today's line has a post slot, that is the brief: the slot type
+   (PROOF, OPINION, TEACH, STORY), the hook formula and the idea. Say "This
+   is Tuesday's PROOF slot from your plan" and draft that, unless the user
+   asked for something else. Log the slot type in the `slot` field.
 1. Read `~/.claude/linkedin/voice.md` if it exists. That file is the user's
    voice profile: how they talk, what they never say, who they are talking to.
    If it does not exist, ask for **three of their own past posts**, infer the
@@ -67,12 +72,33 @@ length:    1,140 characters
 humanizer: 6 artefacts stripped, human score 84 PASS
 post at:   Tuesday 8:15am ET (from your plan)
 
-Reply "yes" to log it, or tell me what to change.
+Paste the URL once it is live, or tell me what to change.
 ```
 
-**5. Never publish.** This skill produces text. The user posts it. On "yes",
-append the post to `~/.claude/linkedin/log.md` with the date, the hook used
-and the first line, so `/li-audit` has a history to work from later.
+**5. Never publish, and log what was published.** This skill produces text.
+The user posts it. "Yes" approves the draft; it does not log anything,
+because an approved draft is not a published post. When the user pastes the
+live URL:
+
+1. Ask whether they edited it before posting. If they did, ask them to paste
+   the post as published.
+2. Add one row with `events.py` (in this folder):
+
+   ```bash
+   python3 events.py add <<'JSON'
+   {"kind": "post", "url": "...", "hook": "#17", "format": "text",
+    "theme": "...", "slot": "PROOF",
+    "published_text": "the post exactly as published"}
+   JSON
+   ```
+
+3. Tell the user you will ask for four numbers in 7 days.
+
+At the start of every run, `python3 events.py pending` lists posts that are
+7 or more days old with no numbers yet. Ask for impressions, reactions,
+comments and reposts from each post's analytics, as plain whole numbers, and
+fill them in with `python3 events.py update URL impressions=1204 reactions=37
+comments=9 reposts=2`. One question, then on to what the user came for.
 
 ## Rules that make the difference
 
@@ -86,8 +112,10 @@ and the first line, so `/li-audit` has a history to work from later.
 - **No links in the post body.** LinkedIn suppresses posts with outbound
   links. Put the link in the first comment and say so in the receipt.
 - **Never fabricate.** No invented metrics, clients, revenue figures or
-  outcomes under the user's name, even as a placeholder. If a number is
+  outcomes under the user's name, even as a placeholder. Numbers come from
+  `~/.claude/linkedin/proof.md` or from the user in chat. If a number is
   needed and unknown, leave `{{your number}}` in the draft and flag it.
+  `/li-human` will not release a draft with an unsourced number.
 
 ## Example
 

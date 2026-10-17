@@ -44,10 +44,7 @@ where the good posts come from.
 
 ## Proof I can use
 
-Real numbers, outcomes and stories I am happy to put my name on. The skills
-will never invent one, so if this section is empty, every draft comes back
-with `{{your number}}` in it.
-
--
--
--
+Moved to its own file. Copy `templates/proof.md` to
+`~/.claude/linkedin/proof.md` and put your numbers there. Every skill checks
+drafts against it. If you already filled this section in, move the lines
+across.

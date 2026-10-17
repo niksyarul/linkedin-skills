@@ -57,7 +57,10 @@ Pick by what the post actually is. Never default to type 1.
 Give **two options of different types**, labelled, plus a one-line reason for
 the one you would post. Run both through `/li-human` first - a comment with an
 em dash in it is more obviously machine-written than a post, because comments
-are short and people read them closely.
+are short and people read them closely. The post being commented on is the
+provenance context file, so "your 23%" passes and "our 31%" needs a source.
+A datum or receipt comment uses only numbers from `proof.md`. With no number
+there, pick a different comment type.
 
 ```
 COMMENT OPTIONS  (on @author's post about hiring)
@@ -80,8 +83,11 @@ part people reply to.
 
 If the user wants an engagement round, ask for the 5-10 posts as pasted text
 in one message, return one comment each in a single block, and keep a running
-note of who they have already commented on this week in
-`~/.claude/linkedin/log.md`. Commenting on the same three people every day is
+note of who they have already commented on this week. When the user says a
+comment is posted, log it with `events.py` from the `/li-post` folder:
+`{"kind": "comment", "person": "their name", "url": "the post's URL",
+"published_text": "the comment as posted"}`. Store only the user's own comment
+and the post's URL, never the other person's post text. Commenting on the same three people every day is
 visible and it looks like what it is.
 
 ## Never

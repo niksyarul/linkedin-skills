@@ -208,6 +208,50 @@ def test_gate_api():                                                   # A2.14
     assert "SPECIFICITY" not in detect.GATED
 
 
+# ---- Fix 4: flag, then rewrite; artefacts-only cleaning (A4.x) ----
+
+ART = humanize.load_lexicon(os.path.join(HERE, "artefacts-only.json"))
+T1 = ("We cut the discovery call \u2014 it worked.\nThe landscape painting hung in our foster home.\n"
+      "Unlock the door. I harness the horse.\nA vital sign was crucial.\n")
+STOCK = ("In today's landscape, we leverage robust synergies to unlock value. Our holistic approach "
+         "empowers teams to navigate complexity. It is crucial to foster a culture of seamless innovation.\n")
+
+
+def test_artefacts_only_keeps_words():                                 # A4.1
+    out = humanize.humanize(T1, ART)[0]
+    for w in ("landscape", "foster", "Unlock", "harness", "vital", "crucial"):
+        assert w in out, w
+    assert "call, it worked" in out                                    # typography still runs
+
+
+def test_artefacts_only_still_strips_invisible():                      # A4.2
+    out = humanize.humanize("A vital sign was crucial \u2014 we unlock the door." + ZWSP + "\n", ART)[0]
+    assert out == "A vital sign was crucial, we unlock the door.\n"
+
+
+def test_full_lexicon_report_flags_terms():                            # A4.3
+    _, report = humanize.humanize(T1, LEX)
+    assert len(report["lexical"]) == 6, report["lexical"]
+
+
+def test_stock_paragraph_not_passed_by_swaps():                        # A4.4
+    swapped = score(clean(STOCK))
+    assert swapped[2] == "PASS"                                        # the hole 2a closes
+    results, overall, verdict = score(humanize.humanize(STOCK, ART)[0])
+    assert results["SLOP DENSITY"][0] == 0.0 and (overall, verdict) == (39.1, "FLAGGED")
+
+
+def test_artefacts_only_matches_slop_json():                           # A4.5
+    with open(os.path.join(HERE, "slop.json"), encoding="utf-8") as f:
+        full = json.load(f)
+    with open(os.path.join(HERE, "artefacts-only.json"), encoding="utf-8") as f:
+        art = json.load(f)
+    assert art["words"] == [] and art["phrases"] == []
+    for k in full:
+        if k not in ("words", "phrases", "note"):
+            assert art[k] == full[k], f"{k} drifted: regenerate artefacts-only.json"
+
+
 if __name__ == "__main__":
     tests = [(n, f) for n, f in sorted(globals().items()) if n.startswith("test_")]
     failed = 0

@@ -64,6 +64,20 @@ Two. That is the number.
   This one gets a surprising share of the total replies, because it removes
   the pressure.
 
+Nobody remembers +4 and +10, so the ledger does. When the user says a message
+went out, record it with `outreach.py` in this folder:
+
+```bash
+python3 outreach.py "Ana Lima" msg1 url=https://www.linkedin.com/in/...   # sets the +4 and +10 dates
+python3 outreach.py "Ana Lima" fu1        # +4 sent
+python3 outreach.py "Ana Lima" fu2        # +10 sent, thread closed
+python3 outreach.py due                   # who is due today
+```
+
+`invited`, `accepted` and `replied` work the same way. Record only what the
+user confirms they sent. Never record what you drafted. The ledger stores
+names, profile URLs and dates, never message text.
+
 Then stop. A third follow-up converts nobody and costs the relationship.
 
 ## Never
@@ -72,6 +86,9 @@ Then stop. A third follow-up converts nobody and costs the relationship.
   tools violate LinkedIn's User Agreement and get accounts restricted.
 - Never fabricate a mutual connection, a shared school, or having read
   something the user has not read.
+- Never invent a number. "A number, a template, a name" comes from `proof.md`
+  or from the user's notes on the person. The notes are the provenance
+  context file.
 - Never write the message that opens "I hope this message finds you well".
 - Never send more than 20 invites a day. Beyond that, LinkedIn throttles the
   account, and a throttled account is a dead one.
@@ -79,5 +96,5 @@ Then stop. A third follow-up converts nobody and costs the relationship.
 ## Output
 
 The invite note with its character count, the first message, and both
-follow-ups with the day they go out. All humanized through `/li-human`. The
+follow-ups with the date they go out. All humanized through `/li-human`. The
 user sends every one of them by hand.

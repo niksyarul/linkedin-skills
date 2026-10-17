@@ -14,8 +14,10 @@ gets executed. Run it once a week, on the same day.
 
 ## Input
 
-If `~/.claude/linkedin/voice.md` and `log.md` exist, read them - the plan
-should not repeat a theme from the last fortnight. If they do not exist, ask
+If `~/.claude/linkedin/voice.md` and `events.csv` exist, read them - the plan
+should not repeat a theme from the last fortnight, and the `kind=comment` rows
+show who the user has already engaged with this week. With no `events.csv`,
+read the older `log.md` if there is one. If they do not exist, ask
 for four things and write them down:
 
 1. What the user sells, and to whom.
@@ -87,8 +89,19 @@ SUN  4:00pm  STORY    #9  Cold Open     - the "going with someone cheaper" email
 ENGAGE  (5 reach / 3 peers / 2 buyers)
   ...
 
+FOLLOW-UPS DUE THIS WEEK  (from outreach.py due 2026-09-14)
+  2026-09-09  Ana Lima   +4 follow-up: add something new
+  ...
+
 Say "write Tuesday" and I will draft it.
 ```
 
-Write the plan to `~/.claude/linkedin/plan.md` so the other skills can read it.
+For the follow-ups, run `python3 outreach.py due YYYY-MM-DD` (in the `/li-dm`
+folder) with the last day of the week, and list what it prints.
+
+Write the plan to `~/.claude/linkedin/plan.md`, replacing last week's, so
+`/li-post` and `/li-audit` can read it. Keep it machine-readable: the first
+line is `week_of: YYYY-MM-DD` (the Monday), then one line per day in exactly
+the shape above (`TUE  8:15am  PROOF    #17 Time Anchor   - the idea`, or
+`engage only`, or `-`), then the engage list and the follow-ups.
 Nothing is scheduled or posted anywhere - this is a plan, and the user runs it.

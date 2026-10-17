@@ -22,8 +22,15 @@ Ask for whichever the user has:
 - Or just the posts and their reaction counts, which is enough for a first
   pass.
 
-Also read `~/.claude/linkedin/log.md` if it exists, since it records which
-hook formula each post used.
+Also read `~/.claude/linkedin/events.csv` if it exists. It has one row per
+published post with its URL, the text as published, the hook, format and
+theme, and the day-7 counts. Join the analytics to it by URL first, then by
+the published text. Never by the approved draft. Rows that already have
+counts need no analytics at all.
+
+If there is no `events.csv` but there is an older `~/.claude/linkedin/log.md`,
+read that instead, and say that the join is by first line, so a post edited
+before publishing may not match.
 
 ## What to actually measure
 
@@ -53,6 +60,12 @@ them, and be willing to conclude something the user will not like:
 - Day and time - check this **last**, and only if the other four show nothing.
   It is almost never the cause, and it is where people want it to be.
 - First-hour comments. Posts the user replied to inside an hour versus not.
+
+If `~/.claude/linkedin/plan.md` exists, compare its week with the
+`events.csv` rows dated in that week. Report planned against posted ("planned
+4, posted 3, the STORY slot was skipped"), and whether the posts that came
+from a planned slot did better or worse than the ones that did not. That is a
+finding about the user's process, and it needs no large sample to be true.
 
 State the finding as a claim with the evidence attached, and say how confident
 it is. With 30 posts you can see a pattern; with 6 you cannot, and you should
