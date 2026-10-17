@@ -1,6 +1,6 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
-  "name": "linkedin-agent-skill",
+  "name": "linkedin-skills",
   "description": "The LinkedIn agent skill pack for Claude",
   "owner": {
     "name": "niksyarul",

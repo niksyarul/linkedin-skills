@@ -36,7 +36,7 @@ Or as a plugin:
 
 ```
 /plugin marketplace add niksyarul/linkedin-skills
-/plugin install linkedin-agent
+/plugin install linkedin-agent@linkedin-skills
 ```
 
 Project-local instead of global: copy the same folders into your repo's
