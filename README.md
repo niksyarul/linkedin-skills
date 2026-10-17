@@ -40,11 +40,17 @@ This is not a claim that the fork beats AI detectors. Neither version promises
 that. The aim is narrower: the score should not push you toward inventing
 facts, and the cleaner should not break real text.
 
-Still to come, from the spec:
-- a proof ledger that every skill checks numbers against;
-- flag-and-rewrite instead of blind word swaps;
-- a log of what you actually published, not what you approved;
-- reminders for DM follow-ups.
+Also added in this fork:
+- **A proof ledger** (`proof.md`). No draft leaves `/li-human` with a number
+  that is not in it, in the text being answered, or confirmed by you in chat.
+- **Flag, then rewrite.** Stock words are flagged and rewritten with their
+  context, instead of swapped blind ("the landscape painting" no longer
+  becomes "the market painting").
+- **A log of what you published**, not what you approved, keyed on the live
+  URL, with the numbers collected at day 7.
+- **A follow-up ledger** that remembers who is due a +4 or +10 DM follow-up.
+- **A plan the other skills read.** `/li-post` drafts today's planned slot and
+  `/li-audit` checks planned against posted.
 
 ## Install
 
