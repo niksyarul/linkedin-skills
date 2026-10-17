@@ -16,6 +16,11 @@ posted it.
 
 ## Before you write
 
+0. Read `~/.claude/linkedin/plan.md` if it exists and its `week_of` is this
+   week. If today's line has a post slot, that is the brief: the slot type
+   (PROOF, OPINION, TEACH, STORY), the hook formula and the idea. Say "This
+   is Tuesday's PROOF slot from your plan" and draft that, unless the user
+   asked for something else. Log the slot type in the `slot` field.
 1. Read `~/.claude/linkedin/voice.md` if it exists. That file is the user's
    voice profile: how they talk, what they never say, who they are talking to.
    If it does not exist, ask for **three of their own past posts**, infer the
@@ -82,7 +87,8 @@ live URL:
    ```bash
    python3 events.py add <<'JSON'
    {"kind": "post", "url": "...", "hook": "#17", "format": "text",
-    "theme": "...", "published_text": "the post exactly as published"}
+    "theme": "...", "slot": "PROOF",
+    "published_text": "the post exactly as published"}
    JSON
    ```
 

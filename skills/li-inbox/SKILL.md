@@ -18,6 +18,11 @@ what is worth writing.
 The user pastes the messages. Screenshots are fine. Do not log into their
 account or read their inbox with a browser tool.
 
+Start with `python3 outreach.py due` (in the `/li-dm` folder) and list the
+follow-ups due today above the triage. When a pasted reply comes from someone
+in the ledger, record it with `outreach.py "Their Name" replied`, so they stop
+showing up as due.
+
 ## Sort into five
 
 | bucket | signal | action |

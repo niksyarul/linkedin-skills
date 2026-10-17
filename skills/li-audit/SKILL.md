@@ -61,6 +61,12 @@ them, and be willing to conclude something the user will not like:
   It is almost never the cause, and it is where people want it to be.
 - First-hour comments. Posts the user replied to inside an hour versus not.
 
+If `~/.claude/linkedin/plan.md` exists, compare its week with the
+`events.csv` rows dated in that week. Report planned against posted ("planned
+4, posted 3, the STORY slot was skipped"), and whether the posts that came
+from a planned slot did better or worse than the ones that did not. That is a
+finding about the user's process, and it needs no large sample to be true.
+
 State the finding as a claim with the evidence attached, and say how confident
 it is. With 30 posts you can see a pattern; with 6 you cannot, and you should
 say that instead of inventing one.

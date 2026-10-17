@@ -98,7 +98,7 @@ Seven days later you are asked for four numbers from its analytics, and
 | `/li-comment` | Comments on other people's posts. Nine types, picked by what the post actually is. Never "Great post!". |
 | `/li-reply` | The thread under your own post. Sorts every comment into lead / substance / peer / support / noise, then writes in that order. |
 | `/li-profile` | Scores your profile against a [12-part rubric](skills/li-profile/rubric.json) out of 100, then rewrites in fix-first order. |
-| `/li-plan` | The week. What to post, when to post it, and the 10 people to engage with. Writes `~/.claude/linkedin/plan.md`. |
+| `/li-plan` | The week. What to post, when to post it, and the 10 people to engage with. Writes `~/.claude/linkedin/plan.md`, which `/li-post` and `/li-audit` read, and lists DM follow-ups due. |
 | `/li-human` | The humanizer. Two scripts that actually run. See below. |
 | `/li-carousel` | Document posts. Slide-by-slide copy, the cover that earns the swipe, and the PDF to upload. |
 | `/li-repurpose` | One video, newsletter or transcript into a week of posts that each stand alone. |
@@ -204,6 +204,7 @@ your name. If a draft needs a number you have not given, it comes back with
 ```
 skills/li-post/hooks.json        21 hook formulas: template, example, what it is for, how it gets ruined
 skills/li-post/events.py         the publication log: one row per live post or comment, counts at day 7
+skills/li-dm/outreach.py         the follow-up ledger: who is due a +4 or +10 follow-up today
 skills/li-human/slop.json        the lexicon: 113 terms, 17 invisible classes, 11 structural tells
 skills/li-human/humanize.py      the three cleaning passes
 skills/li-human/detect.py        the five-check panel

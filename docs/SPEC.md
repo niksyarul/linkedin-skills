@@ -295,11 +295,12 @@ date,kind,person,url,first_line,hook,format,theme,slot,published_text,impression
 **Schema.** `~/.claude/linkedin/outreach.csv`, one row per person, updated in place:
 
 ```
-person,profile_url,invited,accepted,msg1_sent,due_4,due_10,replied,status
+person,profile_url,invited,accepted,msg1,due_4,fu1,due_10,fu2,replied,status
 ```
 
 - `status`: `open` | `replied` | `closed`.
-- `due_4` and `due_10` are computed from `msg1_sent`.
+- `due_4` and `due_10` are computed from `msg1`. `fu1` and `fu2` record when each follow-up went out.
+- The +10 follow-up is due on day 10 even if +4 was skipped.
 - No message bodies are stored.
 
 **Files touched**
