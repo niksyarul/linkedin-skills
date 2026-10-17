@@ -77,6 +77,14 @@ The verdict weights the mean at 60% and the **weakest single check** at 40%,
 because a detector only needs one signal to fire. PASS needs an overall of 70+
 with no check below 55.
 
+SPECIFICITY is printed as advice but does not count toward the verdict,
+otherwise an invented number would buy a PASS. A low SPECIFICITY means ask the
+user for a real number or example, or leave `{{your number}}`. Never invent one.
+
+A check too short to judge prints `N/A` and is left out of the verdict. VOICE
+still counts structural tells on short text, so a rocket emoji or "Agree?" in
+a two-line comment still costs points.
+
 ## Say this honestly
 
 These are five local heuristics modelled on the signals public detectors key
@@ -93,6 +101,6 @@ behalf, and do not tell a user their text is undetectable.
 2. Read the structural flags. Rewrite those lines yourself.
 3. `detect.py draft.txt clean.txt` to show the before and after.
 4. If the verdict is not PASS, fix the weakest check named in the output and
-   go again. Two rounds is normal. Five means the draft was written by
+   go again. It only ever names a gated check, never SPECIFICITY. Two rounds is normal. Five means the draft was written by
    formula, and the fix is a different draft, not more passes.
 5. Show the user the cleaned text and the score. Never the score alone.

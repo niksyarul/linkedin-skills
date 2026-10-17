@@ -106,18 +106,20 @@ those are handed back for a rewrite rather than mangled by a regex.
 | VOICE | contractions, person, structural tells |
 
 The verdict weights the mean at 60% and the **weakest single check** at 40%,
-because a detector only needs one signal to fire.
+because a detector only needs one signal to fire. SPECIFICITY is shown as
+advice and left out of the verdict, so an invented number cannot buy a PASS.
+Checks on text too short to judge show `N/A` and are left out too.
 
 Run against a deliberately terrible draft:
 
 ```
   BURSTINESS    ##################......  73.0
-  SPECIFICITY   ######################## 100.0
+  SPECIFICITY   ######################## 100.0    (advice, not gated)
   SLOP DENSITY  ........................   0.0    19 stock terms, 24.1 per 100 words
   FINGERPRINT   ........................   0.0    1 invisible, 1 em dash, 3 curly quote
   VOICE         ########................  33.3    3 structural tells
   ------------------------------------------------------------
-  HUMAN SCORE   ######..................  24.8   FLAGGED
+  HUMAN SCORE   ####....................  15.9   FLAGGED
 ```
 
 After `humanize.py`, with the flagged structures still unrewritten:

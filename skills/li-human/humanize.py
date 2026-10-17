@@ -33,6 +33,8 @@ import re
 import sys
 import unicodedata
 
+import joiners
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 LEX = os.path.join(HERE, "slop.json")
 
@@ -180,8 +182,9 @@ def scan_structures(text, lex):
 
 
 def humanize(text, lex):
+    # Invisible pass first: a URL match (\S+) would otherwise carry hidden characters through.
+    text, inv = joiners.clean_around(text, lambda t: pass_invisible(t, lex))
     text, urls = protect_urls(text)
-    text, inv = pass_invisible(text, lex)
     text, typo = pass_typographic(text, lex)
     text, lexi = pass_lexical(text, lex)
     text = restore_urls(text, urls)
