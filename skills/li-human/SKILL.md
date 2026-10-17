@@ -32,7 +32,12 @@ soft hyphens, byte-order marks, Unicode tag characters, non-breaking and
 narrow spaces. A keyboard does not produce these. They survive copy-paste,
 they are invisible in every editor, and they are the single most mechanical
 thing in generated text. `humanize.py` deletes every one, including any
-remaining Unicode format character it does not have a name for.
+remaining Unicode format character it does not have a name for, and any
+invisible character glued to the end of a link. The exceptions are characters
+that belong to real text, which `joiners.py` finds by position: the joiner
+inside an emoji like woman-technologist, the tags in the England, Scotland and
+Wales flags, and the joiners inside Persian, Urdu, Hindi and other words in
+scripts that need them. Those are kept.
 
 **2. Typography.** Em dash to comma, en dash to hyphen, curly quotes to
 straight, ellipsis to three dots, bullet character to hyphen. The em dash pass
