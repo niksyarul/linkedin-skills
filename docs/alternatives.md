@@ -1,4 +1,4 @@
-# Other ways to solve what linkedin-agent-skill solves
+# Other ways to solve what linkedin-skills solves
 
 ## Assumptions
 

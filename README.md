@@ -1,4 +1,4 @@
-# The LinkedIn agent skill
+# LinkedIn skills
 
 Eleven Claude skills that run a LinkedIn account. Free, MIT, no signup, no API
 key, nothing to connect.
@@ -15,12 +15,43 @@ before you ever see it.
 
 **Nothing gets posted until you say yes.** These skills write. You post.
 
+## What this is
+
+This is a fork of Jake Schincariol's
+[linkedin-agent-skill](https://github.com/Jakeschincariol/linkedin-agent-skill).
+The skills, the hook formulas, the profile rubric and the humanizer are his
+work. This fork adjusts them. It is not a rewrite.
+
+The adjustments come from running the original scripts on test inputs and
+finding cases where the humanizer works against its own goals. The full
+analysis is in [docs/alternatives.md](docs/alternatives.md). The plan for
+fixing it is in [docs/SPEC.md](docs/SPEC.md).
+
+**Is it better?** On the cases we measured, yes. Elsewhere it behaves the same.
+
+| case | original | this fork |
+| --- | --- | --- |
+| Honest post vs the same post with invented numbers | 41.9 FLAGGED vs 75.1 REVIEW. The score rewarded making numbers up. | 72.2 vs 73.6, both REVIEW. Invention buys almost nothing. |
+| The skill's own 3-sentence example comment | 54.9 REVIEW, and PASS was impossible for any short text | 70.0 REVIEW, judged on what can be measured |
+| Emoji like woman-technologist, the England flag, Persian and Hindi words | Broken by the cleaner | Kept intact |
+| Hidden characters glued to the end of a link | Survived cleaning | Removed |
+
+This is not a claim that the fork beats AI detectors. Neither version promises
+that. The aim is narrower: the score should not push you toward inventing
+facts, and the cleaner should not break real text.
+
+Still to come, from the spec:
+- a proof ledger that every skill checks numbers against;
+- flag-and-rewrite instead of blind word swaps;
+- a log of what you actually published, not what you approved;
+- reminders for DM follow-ups.
+
 ## Install
 
 Paste this into Claude:
 
 ```
-https://github.com/Jakeschincariol/linkedin-agent-skill
+https://github.com/niksyarul/linkedin-skills
 
 Install this skill, then confirm /li-post works.
 ```
@@ -28,15 +59,15 @@ Install this skill, then confirm /li-post works.
 Or do it yourself, in Claude Code:
 
 ```bash
-git clone https://github.com/Jakeschincariol/linkedin-agent-skill.git
-cp -r linkedin-agent-skill/skills/li-* ~/.claude/skills/
+git clone https://github.com/niksyarul/linkedin-skills.git
+cp -r linkedin-skills/skills/li-* ~/.claude/skills/
 ```
 
 Or as a plugin:
 
 ```
-/plugin marketplace add Jakeschincariol/linkedin-agent-skill
-/plugin install linkedin-agent
+/plugin marketplace add niksyarul/linkedin-skills
+/plugin install linkedin-skills@linkedin-skills
 ```
 
 Project-local instead of global: copy the same folders into your repo's
@@ -171,8 +202,13 @@ templates/voice.md               your voice profile. Fill this in first.
 
 ## Credit
 
-Made by Jake Schincariol, [opusjake.ai](https://opusjake.ai).
-The full write-up is at [opusjake.ai/r/linkedin-agent](https://opusjake.ai/r/linkedin-agent).
+Original pack by **Jake Schincariol**
+([opusjake.ai](https://opusjake.ai),
+[linkedin-agent-skill](https://github.com/Jakeschincariol/linkedin-agent-skill)).
+His write-up is at [opusjake.ai/r/linkedin-agent](https://opusjake.ai/r/linkedin-agent).
+Go and star his repo.
+
+Fork and adjustments by [niksyarul](https://github.com/niksyarul).
 
 ## License
 
