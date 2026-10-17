@@ -1,4 +1,4 @@
-# The LinkedIn agent skill
+# LinkedIn skills
 
 Eleven Claude skills that run a LinkedIn account. Free, MIT, no signup, no API
 key, nothing to connect.
@@ -36,7 +36,7 @@ Or as a plugin:
 
 ```
 /plugin marketplace add niksyarul/linkedin-skills
-/plugin install linkedin-agent@linkedin-skills
+/plugin install linkedin-skills@linkedin-skills
 ```
 
 Project-local instead of global: copy the same folders into your repo's
@@ -169,9 +169,7 @@ templates/voice.md               your voice profile. Fill this in first.
 
 ## Credit
 
-Maintained by [niksyarul](https://github.com/niksyarul).
-Based on linkedin-agent-skill by Jake Schincariol, [opusjake.ai](https://opusjake.ai),
-whose write-up is at [opusjake.ai/r/linkedin-agent](https://opusjake.ai/r/linkedin-agent).
+Made by [niksyarul](https://github.com/niksyarul).
 
 ## License
 
