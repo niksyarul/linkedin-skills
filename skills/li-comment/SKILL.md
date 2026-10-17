@@ -57,7 +57,10 @@ Pick by what the post actually is. Never default to type 1.
 Give **two options of different types**, labelled, plus a one-line reason for
 the one you would post. Run both through `/li-human` first - a comment with an
 em dash in it is more obviously machine-written than a post, because comments
-are short and people read them closely.
+are short and people read them closely. The post being commented on is the
+provenance context file, so "your 23%" passes and "our 31%" needs a source.
+A datum or receipt comment uses only numbers from `proof.md`. With no number
+there, pick a different comment type.
 
 ```
 COMMENT OPTIONS  (on @author's post about hiring)

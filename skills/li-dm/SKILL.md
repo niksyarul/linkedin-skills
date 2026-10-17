@@ -72,6 +72,9 @@ Then stop. A third follow-up converts nobody and costs the relationship.
   tools violate LinkedIn's User Agreement and get accounts restricted.
 - Never fabricate a mutual connection, a shared school, or having read
   something the user has not read.
+- Never invent a number. "A number, a template, a name" comes from `proof.md`
+  or from the user's notes on the person. The notes are the provenance
+  context file.
 - Never write the message that opens "I hope this message finds you well".
 - Never send more than 20 invites a day. Beyond that, LinkedIn throttles the
   account, and a throttled account is a dead one.

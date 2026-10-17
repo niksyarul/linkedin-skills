@@ -86,8 +86,10 @@ and the first line, so `/li-audit` has a history to work from later.
 - **No links in the post body.** LinkedIn suppresses posts with outbound
   links. Put the link in the first comment and say so in the receipt.
 - **Never fabricate.** No invented metrics, clients, revenue figures or
-  outcomes under the user's name, even as a placeholder. If a number is
+  outcomes under the user's name, even as a placeholder. Numbers come from
+  `~/.claude/linkedin/proof.md` or from the user in chat. If a number is
   needed and unknown, leave `{{your number}}` in the draft and flag it.
+  `/li-human` will not release a draft with an unsourced number.
 
 ## Example
 

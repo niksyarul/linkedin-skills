@@ -100,12 +100,50 @@ does tend to move those numbers, because they are measuring the same
 underlying things. That is the claim. Do not make a bigger one on the user's
 behalf, and do not tell a user their text is undetectable.
 
+## Numbers must be sourced
+
+Every number or magnitude claim in a draft ("40%", "$12k", "eleven clients",
+"thousands", "doubled") must come from somewhere the user stands behind.
+`provenance.py` checks this mechanically:
+
+```bash
+python3 provenance.py clean.txt ~/.claude/linkedin/proof.md [context.txt ...]
+```
+
+- `proof.md` is the user's ledger: one fact per line, optionally starting with
+  a date. Copy `templates/proof.md` there if it does not exist.
+- A context file sources numbers for this one draft only. Write it from:
+  - the post being commented on (`/li-comment`);
+  - the comment or message being answered (`/li-reply`, `/li-inbox`);
+  - the user's notes on the person (`/li-dm`);
+  - the transcript or source (`/li-repurpose`);
+  - numbers the user confirmed in chat.
+- Only the user's own message counts as confirmation. Ask "is 15 yours?";
+  never assume it.
+- `{{placeholders}}` are honest gaps and always pass.
+
+When a number fails, it goes to exactly one place, with the user's say-so:
+
+1. A fact they will reuse goes into `proof.md`.
+2. A number from the text being answered, or one they just confirmed, goes
+   into this draft's context file.
+3. A phrase that makes no claim ("I thought twice") goes into `IDIOMS` in
+   `provenance.py`.
+
+Never put "double" or "half" in the ledger to silence a false fail. That lets
+"we doubled revenue" through.
+
 ## Order of operations
 
 1. `humanize.py draft.txt -o clean.txt --report`
 2. Read the structural flags. Rewrite those lines yourself.
 3. `detect.py draft.txt clean.txt` to show the before and after.
 4. If the verdict is not PASS, fix the weakest check named in the output and
-   go again. It only ever names a gated check, never SPECIFICITY. Two rounds is normal. Five means the draft was written by
-   formula, and the fix is a different draft, not more passes.
-5. Show the user the cleaned text and the score. Never the score alone.
+   go again. It only ever names a gated check, never SPECIFICITY. Two rounds
+   is normal. Five means the draft was written by formula, and the fix is a
+   different draft, not more passes.
+5. `provenance.py clean.txt ~/.claude/linkedin/proof.md [context...]` must
+   print `OK`. This is a second required condition, alongside the verdict.
+   Any number added during step 4 fails unless it is sourced. If a number
+   fails, ask the user or put `{{your number}}` back. Never invent a source.
+6. Show the user the cleaned text and the score. Never the score alone.

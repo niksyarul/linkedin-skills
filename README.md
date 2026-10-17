@@ -80,6 +80,11 @@ Then spend ten minutes on `templates/voice.md`. Copy it to
 into Claude and say "write my voice.md from these". Every skill reads that
 file. Skip it and everything comes out sounding like everyone else.
 
+Then copy `templates/proof.md` to `~/.claude/linkedin/proof.md` and add the
+numbers you are happy to put your name on. No draft leaves `/li-human` with a
+number that is not in that file, in the text being answered, or confirmed by
+you in chat.
+
 ## The eleven
 
 | command | what it does |
@@ -196,8 +201,10 @@ skills/li-post/hooks.json        21 hook formulas: template, example, what it is
 skills/li-human/slop.json        the lexicon: 113 terms, 17 invisible classes, 11 structural tells
 skills/li-human/humanize.py      the three cleaning passes
 skills/li-human/detect.py        the five-check panel
+skills/li-human/provenance.py    fails a draft with a number that is not in your ledger
 skills/li-profile/rubric.json    the 100-point profile score
 templates/voice.md               your voice profile. Fill this in first.
+templates/proof.md               your proof ledger: the numbers you stand behind
 ```
 
 ## Credit

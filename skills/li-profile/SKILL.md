@@ -63,8 +63,9 @@ contact. An empty featured section is eight points and the only place on the
 profile you fully control.
 
 **5. Experience.** Each role gets one line of scope and two to three bullets
-that are outcomes with numbers, not duties. Cut anything older than ten years
-to a single line.
+that are outcomes with numbers, not duties. The numbers come from `proof.md`
+or from the user in chat. Never estimate one. Cut anything older than ten
+years to a single line.
 
 **6. Banner.** One sentence of positioning and one way to reach you. The
 default blue gradient is the clearest signal on the page that nobody is home.
