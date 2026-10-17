@@ -20,7 +20,7 @@ before you ever see it.
 Paste this into Claude:
 
 ```
-https://github.com/Jakeschincariol/linkedin-agent-skill
+https://github.com/niksyarul/linkedin-skills
 
 Install this skill, then confirm /li-post works.
 ```
@@ -28,14 +28,14 @@ Install this skill, then confirm /li-post works.
 Or do it yourself, in Claude Code:
 
 ```bash
-git clone https://github.com/Jakeschincariol/linkedin-agent-skill.git
-cp -r linkedin-agent-skill/skills/li-* ~/.claude/skills/
+git clone https://github.com/niksyarul/linkedin-skills.git
+cp -r linkedin-skills/skills/li-* ~/.claude/skills/
 ```
 
 Or as a plugin:
 
 ```
-/plugin marketplace add Jakeschincariol/linkedin-agent-skill
+/plugin marketplace add niksyarul/linkedin-skills
 /plugin install linkedin-agent
 ```
 
@@ -169,8 +169,9 @@ templates/voice.md               your voice profile. Fill this in first.
 
 ## Credit
 
-Made by Jake Schincariol, [opusjake.ai](https://opusjake.ai).
-The full write-up is at [opusjake.ai/r/linkedin-agent](https://opusjake.ai/r/linkedin-agent).
+Maintained by [niksyarul](https://github.com/niksyarul).
+Based on linkedin-agent-skill by Jake Schincariol, [opusjake.ai](https://opusjake.ai),
+whose write-up is at [opusjake.ai/r/linkedin-agent](https://opusjake.ai/r/linkedin-agent).
 
 ## License
 
