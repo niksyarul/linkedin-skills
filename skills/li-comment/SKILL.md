@@ -83,8 +83,11 @@ part people reply to.
 
 If the user wants an engagement round, ask for the 5-10 posts as pasted text
 in one message, return one comment each in a single block, and keep a running
-note of who they have already commented on this week in
-`~/.claude/linkedin/log.md`. Commenting on the same three people every day is
+note of who they have already commented on this week. When the user says a
+comment is posted, log it with `events.py` from the `/li-post` folder:
+`{"kind": "comment", "person": "their name", "url": "the post's URL",
+"published_text": "the comment as posted"}`. Store only the user's own comment
+and the post's URL, never the other person's post text. Commenting on the same three people every day is
 visible and it looks like what it is.
 
 ## Never

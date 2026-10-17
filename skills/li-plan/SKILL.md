@@ -14,8 +14,10 @@ gets executed. Run it once a week, on the same day.
 
 ## Input
 
-If `~/.claude/linkedin/voice.md` and `log.md` exist, read them - the plan
-should not repeat a theme from the last fortnight. If they do not exist, ask
+If `~/.claude/linkedin/voice.md` and `events.csv` exist, read them - the plan
+should not repeat a theme from the last fortnight, and the `kind=comment` rows
+show who the user has already engaged with this week. With no `events.csv`,
+read the older `log.md` if there is one. If they do not exist, ask
 for four things and write them down:
 
 1. What the user sells, and to whom.

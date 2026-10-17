@@ -243,10 +243,11 @@ The full appendix table for `provenance.py` (32 rows), run with ledger `L1`, is 
 **Schema.** `~/.claude/linkedin/events.csv`, CSV with a header row, written with Python's `csv` module so that multi-line text is quoted correctly:
 
 ```
-date,kind,url,first_line,hook,format,theme,slot,published_text,impressions,reactions,comments,reposts
+date,kind,person,url,first_line,hook,format,theme,slot,published_text,impressions,reactions,comments,reposts
 ```
 
 - `kind`: `post` | `comment`.
+- `person`: for a comment, whose post it was on. Empty for posts.
 - `slot`: empty until fix 6.
 - The four counts: plain whole numbers, empty until day 7.
 

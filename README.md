@@ -85,6 +85,11 @@ numbers you are happy to put your name on. No draft leaves `/li-human` with a
 number that is not in that file, in the text being answered, or confirmed by
 you in chat.
 
+After you post, paste the live URL back. That is when the post is logged to
+`~/.claude/linkedin/events.csv`, with the text as you actually published it.
+Seven days later you are asked for four numbers from its analytics, and
+`/li-audit` works from that log.
+
 ## The eleven
 
 | command | what it does |
@@ -198,6 +203,7 @@ your name. If a draft needs a number you have not given, it comes back with
 
 ```
 skills/li-post/hooks.json        21 hook formulas: template, example, what it is for, how it gets ruined
+skills/li-post/events.py         the publication log: one row per live post or comment, counts at day 7
 skills/li-human/slop.json        the lexicon: 113 terms, 17 invisible classes, 11 structural tells
 skills/li-human/humanize.py      the three cleaning passes
 skills/li-human/detect.py        the five-check panel
