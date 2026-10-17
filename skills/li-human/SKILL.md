@@ -44,10 +44,15 @@ straight, ellipsis to three dots, bullet character to hyphen. The em dash pass
 is the one that matters: it collapses ` — ` to `, ` and then cleans up the
 double punctuation that leaves behind.
 
-**3. The slop lexicon.** delve, leverage, robust, seamless, crucial, tapestry,
-testament to, moreover, "in today's fast-paced world", "let that sink in" and
-the rest, each swapped for a plain word, with capitalisation preserved and
-URLs left untouched.
+**3. The slop lexicon is flagged, not swapped.** delve, leverage, robust,
+seamless, crucial, tapestry, testament to, moreover, "in today's fast-paced
+world", "let that sink in" and the rest. A blind swap breaks meaning ("the
+landscape painting" becomes "the market painting", "a vital sign" becomes "a
+important sign"), so the skill cleans with `artefacts-only.json`, which keeps
+the words, and you rewrite each flagged sentence with its context.
+`humanize.py` run on its own still swaps words, for anyone who wants that.
+`artefacts-only.json` is `slop.json` with the word and phrase lists empty.
+Regenerate it when you edit `slop.json`.
 
 ## What does NOT get fixed automatically
 
@@ -135,15 +140,26 @@ Never put "double" or "half" in the ledger to silence a false fail. That lets
 
 ## Order of operations
 
-1. `humanize.py draft.txt -o clean.txt --report`
-2. Read the structural flags. Rewrite those lines yourself.
-3. `detect.py draft.txt clean.txt` to show the before and after.
-4. If the verdict is not PASS, fix the weakest check named in the output and
+1. Flag: `humanize.py draft.txt --report -o /dev/null`. Its "3. SLOP LEXICON"
+   section lists the stock terms, and "4. STRUCTURAL TELLS" lists the shapes.
+   The text it would write is thrown away.
+2. Clean: `humanize.py draft.txt --lexicon artefacts-only.json -o clean.txt`.
+   This removes invisible characters and fixes typography without touching
+   a word.
+3. Rewrite: in `clean.txt`, rewrite each sentence that holds a flagged term
+   or tell. The instruction to yourself is "rewrite this sentence without X,
+   keep the meaning, keep the voice". Show the user the changed sentences as
+   a before/after, then run step 1 on `clean.txt` again until it lists
+   nothing worth acting on. A flagged word the user actually uses can stay.
+   Say so, and offer to remove it from `slop.json`.
+4. `detect.py draft.txt clean.txt` to show the before and after. It scores
+   with the full `slop.json`, so SLOP DENSITY measures what is still there.
+5. If the verdict is not PASS, fix the weakest check named in the output and
    go again. It only ever names a gated check, never SPECIFICITY. Two rounds
    is normal. Five means the draft was written by formula, and the fix is a
    different draft, not more passes.
-5. `provenance.py clean.txt ~/.claude/linkedin/proof.md [context...]` must
+6. `provenance.py clean.txt ~/.claude/linkedin/proof.md [context...]` must
    print `OK`. This is a second required condition, alongside the verdict.
-   Any number added during step 4 fails unless it is sourced. If a number
+   Any number added during step 5 fails unless it is sourced. If a number
    fails, ask the user or put `{{your number}}` back. Never invent a source.
-6. Show the user the cleaned text and the score. Never the score alone.
+7. Show the user the cleaned text and the score. Never the score alone.
