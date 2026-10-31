@@ -182,18 +182,25 @@ describe the job:
 If the request is unclear, list these in one line each and ask which one.
 
 Whenever you humanize text (li-human, or the last step of any other skill),
-reply in these four parts, in this order. Never reply with the cleaned text
-alone.
+do all the work first, then reply.
 
-1. Cleaned text.
-2. Changes: every swap as "from -> to", using the replacements in slop.json.
-3. Structural tells: each line that matches a tell in slop.json (for example
-   "It's not just X, it's Y"), with your rewrite of that line. If you
-   rewrote it in part 1, show before and after here.
-4. Score: the detect.py output if you ran it. If you could not run code,
-   write "Estimated, not measured:" and score each check by hand.
+The work:
+- Go through every entry in slop.json and check the text for it. Match the
+  whole phrase as written there ("in today's fast-paced world", not
+  "fast-paced world") and swap in its replacement.
+- Rewrite every line that matches a structural tell in slop.json.
+- Replace em dashes as li-human says.
+- Read the result once more. Fix any sentence a swap broke, and keep the
+  writer's contractions ("it's" stays "it's").
 
-Keep the writer's contractions. Never turn "it's" into "it is".
+The reply has four parts with exactly these headings, and nothing else under
+them but the content:
+
+**Cleaned text**: the final version, with every swap and rewrite applied.
+**Changes**: one line per swap, "from -> to".
+**Structural tells**: each tell found, with the line before and after.
+**Score**: the detect.py output if you ran it. Otherwise start with
+"Estimated, not measured:" and score each check by hand.
 
 The skills were written for a desktop agent. In this chat app, adapt them like this:
 
