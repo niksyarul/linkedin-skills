@@ -24,11 +24,12 @@ Whenever you humanize text (li-human, or the last step of any other skill),
 do all the work first, then reply.
 
 The work:
-- Go through every entry in slop.json and check the text for it. Match the
-  whole phrase as written there ("in today's fast-paced world", not
-  "fast-paced world") and swap in its replacement.
-- Rewrite every line that matches a structural tell in slop.json.
-- Replace em dashes as li-human says.
+- Use the Humanizer cheat sheet right after these instructions. Go down the
+  swap list line by line and check the text for each one. Match the whole
+  phrase ("in today's fast-paced world", not "fast-paced world") and swap in
+  its replacement. Then do the characters list.
+- Rewrite every line that matches a structural tell on the cheat sheet.
+- You must always do this work. There is no mode that skips it.
 - Read the result once more. Fix any sentence a swap broke, and keep the
   writer's contractions ("it's" stays "it's").
 
@@ -73,6 +74,157 @@ The skills were written for a desktop agent. In this chat app, adapt them like t
 
 Every draft goes through li-human before the user sees it.
 
+
+---
+
+# Humanizer cheat sheet
+
+The same rules as slop.json. Check the text against every line.
+
+## Swap these (whole phrase, any capitalisation)
+
+- in the ever-evolving landscape of -> in
+- in the ever-changing world of -> in
+- in today's fast-paced world -> right now
+- i am excited to announce -> (delete)
+- what are your thoughts? -> (delete)
+- it is worth noting that -> note that
+- in today's digital age -> right now
+- had the opportunity to -> got to
+- imagine a world where -> imagine if
+- at the end of the day -> (delete)
+- i'm thrilled to share -> (delete)
+- we've all been there -> (delete)
+- drop a comment below -> (delete)
+- it's no secret that -> (delete)
+- the choice is yours -> (delete)
+- without further ado -> (delete)
+- save this for later -> (delete)
+- the future is here -> (delete)
+- the harsh truth is -> (delete)
+- here's the thing -> (delete)
+- let that sink in -> (delete)
+- food for thought -> (delete)
+- when it comes to -> with
+- move the needle -> make a difference
+- i am humbled to -> (delete)
+- read that again -> (delete)
+- a wide range of -> many
+- a testament to -> proof of
+- you're welcome -> (delete)
+- dive deep into -> get into
+- transformative -> big
+- groundbreaking -> new
+- treasure trove -> pile
+- let's face it -> (delete)
+- needle-moving -> useful
+- spoiler alert -> (delete)
+- who's with me -> (delete)
+- revolutionize -> change
+- comprehensive -> complete
+- game-changing -> big
+- in conclusion -> so
+- picture this -> (delete)
+- cutting-edge -> new
+- game-changer -> big deal
+- unparalleled -> unmatched
+- meticulously -> carefully
+- multifaceted -> complicated
+- testament to -> proof of
+- additionally -> also
+- nevertheless -> still
+- consequently -> so
+- underscores -> shows
+- cornerstone -> base
+- plethora of -> lots of
+- furthermore -> also
+- importantly -> (delete)
+- in order to -> to
+- delve into -> look at
+- leveraging -> using
+- facilitate -> help
+- streamline -> simplify
+- underscore -> show
+- seamlessly -> cleanly
+- invaluable -> useful
+- meticulous -> careful
+- innovative -> new
+- remarkable -> notable
+- compelling -> convincing
+- north star -> goal
+- ultimately -> in the end
+- in essence -> basically
+- buckle up -> (delete)
+- deep dive -> breakdown
+- utilizing -> using
+- embark on -> start
+- spearhead -> lead
+- cultivate -> build
+- myriad of -> many
+- landscape -> market
+- ecosystem -> system
+- leverage -> use
+- showcase -> show
+- seamless -> clean
+- holistic -> whole
+- profound -> big
+- tapestry -> mix
+- paradigm -> model
+- plethora -> lots
+- moreover -> also
+- utilize -> use
+- harness -> use
+- elevate -> improve
+- amplify -> boost
+- curated -> picked
+- empower -> let
+- pivotal -> key
+- crucial -> important
+- bespoke -> custom
+- journey -> process
+- synergy -> overlap
+- arsenal -> set
+- notably -> (delete)
+- foster -> build
+- unlock -> get
+- curate -> pick
+- robust -> solid
+- myriad -> many
+- beacon -> signal
+- delve -> look
+- vital -> important
+- realm -> world
+- hence -> so
+- thus -> so
+
+## Characters
+
+- EM DASH (—) -> ', '
+- EN DASH (–) -> '-'
+- LEFT SINGLE QUOTE (‘) -> "'"
+- RIGHT SINGLE QUOTE (’) -> "'"
+- LEFT DOUBLE QUOTE (“) -> '"'
+- RIGHT DOUBLE QUOTE (”) -> '"'
+- HORIZONTAL ELLIPSIS (…) -> '...'
+- PRIME (′) -> "'"
+- MIDDLE DOT (·) -> '-'
+- BULLET (•) -> '-'
+- RIGHTWARDS ARROW (→) -> '->'
+- Any zero-width or invisible character -> (delete)
+
+## Structural tells: rewrite by hand
+
+- "It's not just X, it's Y": Say the one thing you actually mean. Delete the setup half.
+- "Not only X but also Y": Split into two sentences, or drop the weaker half.
+- "It isn't about X. It's about Y.": Lead with Y. The reversal is the tell.
+- One-word rhetorical question line: Answer it inline instead of staging a reveal.
+- "Here's what I learned": State the lesson. Skip the announcement.
+- Rule-of-three triad: Two items or four. Three is the model's default rhythm.
+- Rocket / fire / bulb / sparkle / dart emoji: One emoji max, and not one of these five.
+- Hashtag wall (5+): Three hashtags. LinkedIn stopped rewarding the wall.
+- Model self-reference: Delete the sentence.
+- Essay-closer opener: A post does not need a conclusion paragraph.
+- Reflex engagement bait: Ask a question only you could ask, about the specific thing above it.
 
 ---
 

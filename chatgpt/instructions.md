@@ -24,11 +24,12 @@ Whenever you humanize text (li-human, or the last step of any other skill),
 do all the work first, then reply.
 
 The work:
-- Go through every entry in slop.json and check the text for it. Match the
-  whole phrase as written there ("in today's fast-paced world", not
-  "fast-paced world") and swap in its replacement.
-- Rewrite every line that matches a structural tell in slop.json.
-- Replace em dashes as li-human says.
+- Use the Humanizer cheat sheet right after these instructions. Go down the
+  swap list line by line and check the text for each one. Match the whole
+  phrase ("in today's fast-paced world", not "fast-paced world") and swap in
+  its replacement. Then do the characters list.
+- Rewrite every line that matches a structural tell on the cheat sheet.
+- You must always do this work. There is no mode that skips it.
 - Read the result once more. Fix any sentence a swap broke, and keep the
   writer's contractions ("it's" stays "it's").
 
