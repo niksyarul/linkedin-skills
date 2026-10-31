@@ -20,6 +20,42 @@ describe the job:
 
 If the request is unclear, list these in one line each and ask which one.
 
+Whenever you humanize text (li-human, or the last step of any other skill),
+do all the work first, then reply.
+
+If you have any way to run Python (code interpreter, data analysis, code
+execution), you must use it: extract the files with the snippet below and
+run humanize.py, then detect.py, on the draft. Their output is the Changes and
+the Score. Then rewrite the structural tells humanize.py flags. Only if you
+have no way to run code at all, do the work by hand, in three passes. You
+must always do all three. There is no mode that skips them.
+
+Pass 1, find. Read the draft one sentence at a time. For each word and
+phrase in it, look it up in the Humanizer cheat sheet right after these
+instructions. Write down every hit with its replacement. Match whole phrases
+first ("in today's fast-paced world -> right now" beats "fast-paced"). Also
+note each em dash, curly quote, and each line that matches a structural tell.
+
+Pass 2, fix. Apply every hit from pass 1. Rewrite each structural tell line
+the way the cheat sheet says. Change nothing else: keep the writer's words,
+order and contractions ("it's" stays "it's", "I've" stays "I've").
+
+Pass 3, check. Read your cleaned text against the cheat sheet once more. If
+any listed word or phrase, any em dash, or any structural tell is still
+there, fix it and check again. Also undo anything you changed that the
+cheat sheet did not ask for.
+
+The reply has five parts with exactly these headings, and nothing else under
+them but the content:
+
+**Cleaned text**: the final version, with every swap and rewrite applied.
+**Changes**: one line per swap, "from -> to".
+**Structural tells**: each tell found, with the original line and your rewrite.
+**Score**: the detect.py output if you ran it. Otherwise start with
+"Estimated, not measured:" and score each check by hand.
+**Final check**: one line: "No cheat-sheet terms left, contractions kept,
+tells rewritten", or say which of these is not true and why.
+
 The skills were written for a desktop agent. In this chat app, adapt them like this:
 
 1. The user's files. `voice.md` (their voice), `proof.md` (numbers they stand
@@ -52,6 +88,157 @@ The skills were written for a desktop agent. In this chat app, adapt them like t
 
 Every draft goes through li-human before the user sees it.
 
+
+---
+
+# Humanizer cheat sheet
+
+The same rules as slop.json. Check the text against every line.
+
+## Swap these (whole phrase, any capitalisation)
+
+- in the ever-evolving landscape of -> in
+- in the ever-changing world of -> in
+- in today's fast-paced world -> right now
+- i am excited to announce -> (delete)
+- what are your thoughts? -> (delete)
+- it is worth noting that -> note that
+- in today's digital age -> right now
+- had the opportunity to -> got to
+- imagine a world where -> imagine if
+- at the end of the day -> (delete)
+- i'm thrilled to share -> (delete)
+- we've all been there -> (delete)
+- drop a comment below -> (delete)
+- it's no secret that -> (delete)
+- the choice is yours -> (delete)
+- without further ado -> (delete)
+- save this for later -> (delete)
+- the future is here -> (delete)
+- the harsh truth is -> (delete)
+- here's the thing -> (delete)
+- let that sink in -> (delete)
+- food for thought -> (delete)
+- when it comes to -> with
+- move the needle -> make a difference
+- i am humbled to -> (delete)
+- read that again -> (delete)
+- a wide range of -> many
+- a testament to -> proof of
+- you're welcome -> (delete)
+- dive deep into -> get into
+- transformative -> big
+- groundbreaking -> new
+- treasure trove -> pile
+- let's face it -> (delete)
+- needle-moving -> useful
+- spoiler alert -> (delete)
+- who's with me -> (delete)
+- revolutionize -> change
+- comprehensive -> complete
+- game-changing -> big
+- in conclusion -> so
+- picture this -> (delete)
+- cutting-edge -> new
+- game-changer -> big deal
+- unparalleled -> unmatched
+- meticulously -> carefully
+- multifaceted -> complicated
+- testament to -> proof of
+- additionally -> also
+- nevertheless -> still
+- consequently -> so
+- underscores -> shows
+- cornerstone -> base
+- plethora of -> lots of
+- furthermore -> also
+- importantly -> (delete)
+- in order to -> to
+- delve into -> look at
+- leveraging -> using
+- facilitate -> help
+- streamline -> simplify
+- underscore -> show
+- seamlessly -> cleanly
+- invaluable -> useful
+- meticulous -> careful
+- innovative -> new
+- remarkable -> notable
+- compelling -> convincing
+- north star -> goal
+- ultimately -> in the end
+- in essence -> basically
+- buckle up -> (delete)
+- deep dive -> breakdown
+- utilizing -> using
+- embark on -> start
+- spearhead -> lead
+- cultivate -> build
+- myriad of -> many
+- landscape -> market
+- ecosystem -> system
+- leverage -> use
+- showcase -> show
+- seamless -> clean
+- holistic -> whole
+- profound -> big
+- tapestry -> mix
+- paradigm -> model
+- plethora -> lots
+- moreover -> also
+- utilize -> use
+- harness -> use
+- elevate -> improve
+- amplify -> boost
+- curated -> picked
+- empower -> let
+- pivotal -> key
+- crucial -> important
+- bespoke -> custom
+- journey -> process
+- synergy -> overlap
+- arsenal -> set
+- notably -> (delete)
+- foster -> build
+- unlock -> get
+- curate -> pick
+- robust -> solid
+- myriad -> many
+- beacon -> signal
+- delve -> look
+- vital -> important
+- realm -> world
+- hence -> so
+- thus -> so
+
+## Characters
+
+- EM DASH (—) -> ', '
+- EN DASH (–) -> '-'
+- LEFT SINGLE QUOTE (‘) -> "'"
+- RIGHT SINGLE QUOTE (’) -> "'"
+- LEFT DOUBLE QUOTE (“) -> '"'
+- RIGHT DOUBLE QUOTE (”) -> '"'
+- HORIZONTAL ELLIPSIS (…) -> '...'
+- PRIME (′) -> "'"
+- MIDDLE DOT (·) -> '-'
+- BULLET (•) -> '-'
+- RIGHTWARDS ARROW (→) -> '->'
+- Any zero-width or invisible character -> (delete)
+
+## Structural tells: rewrite by hand
+
+- "It's not just X, it's Y": Say the one thing you actually mean. Delete the setup half.
+- "Not only X but also Y": Split into two sentences, or drop the weaker half.
+- "It isn't about X. It's about Y.": Lead with Y. The reversal is the tell.
+- One-word rhetorical question line: Answer it inline instead of staging a reveal.
+- "Here's what I learned": State the lesson. Skip the announcement.
+- Rule-of-three triad: Two items or four. Three is the model's default rhythm.
+- Rocket / fire / bulb / sparkle / dart emoji: One emoji max, and not one of these five.
+- Hashtag wall (5+): Three hashtags. LinkedIn stopped rewarding the wall.
+- Model self-reference: Delete the sentence.
+- Essay-closer opener: A post does not need a conclusion paragraph.
+- Reflex engagement bait: Ask a question only you could ask, about the specific thing above it.
 
 ---
 
