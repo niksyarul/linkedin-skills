@@ -15,6 +15,14 @@ before you ever see it.
 
 **Nothing gets posted until you say yes.** These skills write. You post.
 
+**Install for the AI you use:**
+[ChatGPT](#chatgpt-project-or-custom-gpt) ·
+[Gemini](#gemini-gem) ·
+[Claude Code](#claude-code) ·
+[Gemini CLI](#gemini-cli) ·
+[Codex](#codex-and-chatgpt-desktop) ·
+[any chat, one file](#any-chat-app-one-file)
+
 ## What this is
 
 This is a fork of Jake Schincariol's
@@ -54,6 +62,8 @@ Also added in this fork:
 
 ## Install
 
+### Claude Code
+
 Paste this into Claude:
 
 ```
@@ -79,7 +89,8 @@ Or as a plugin:
 Project-local instead of global: copy the same folders into your repo's
 `.claude/skills/`. No Claude Code at all? Paste any single `SKILL.md` at the
 top of a chat and it runs as a mode - you lose the two Python tools, which is
-most of the point of `/li-human`, but the rest works.
+most of the point of `/li-human`, but the rest works. Or use the
+[one-file version](#any-chat-app-one-file), which has all eleven.
 
 ### Gemini CLI
 
@@ -96,7 +107,7 @@ Run `/skills list` inside `gemini` to check they loaded. Gemini picks a skill
 from its description, so ask in plain words ("write a LinkedIn post about
 X", "humanize this draft") instead of typing `/li-post`.
 
-### Any chat app: one file
+### Any chat app (one file)
 
 Works in a normal ChatGPT, Gemini or Claude chat, free accounts included:
 
@@ -138,7 +149,9 @@ and the DM follow-up ledger cannot be kept for you. When a skill would log
 something, ChatGPT gives you the line to save yourself. If ChatGPT cannot run
 the scripts, it checks the draft by hand and says the scores are estimates.
 
-### Gemini (web or phone app, nothing to install)
+### Gemini Gem
+
+Web or phone app, nothing to install.
 
 The same pack works as a Gem:
 
@@ -155,7 +168,7 @@ A saved Gem can be shared as a link, the same as a custom GPT.
 Maintainers: after editing anything under `skills/`, run
 `python3 chatgpt/build.py` to rebuild `skills.md` and `tools.zip`.
 
-### Codex and the ChatGPT desktop app's skills
+### Codex and ChatGPT desktop
 
 Codex CLI, the Codex IDE extension and the ChatGPT desktop app read the same
 format from `~/.agents/skills` (or `.agents/skills/` in a repo):
