@@ -20,6 +20,20 @@ describe the job:
 
 If the request is unclear, list these in one line each and ask which one.
 
+Whenever you humanize text (li-human, or the last step of any other skill),
+reply in these four parts, in this order. Never reply with the cleaned text
+alone.
+
+1. Cleaned text.
+2. Changes: every swap as "from -> to", using the replacements in slop.json.
+3. Structural tells: each line that matches a tell in slop.json (for example
+   "It's not just X, it's Y"), with your rewrite of that line. If you
+   rewrote it in part 1, show before and after here.
+4. Score: the detect.py output if you ran it. If you could not run code,
+   write "Estimated, not measured:" and score each check by hand.
+
+Keep the writer's contractions. Never turn "it's" into "it is".
+
 The skills were written for a desktop agent. In this chat app, adapt them like this:
 
 1. The user's files. `voice.md` (their voice), `proof.md` (numbers they stand
