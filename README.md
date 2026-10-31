@@ -1,7 +1,15 @@
 # LinkedIn skills
 
-Eleven skills that run a LinkedIn account, for Claude, Gemini CLI and
-ChatGPT/Codex. Free, MIT, no signup, no API key, nothing to connect.
+**Install for the AI you use:**
+[ChatGPT](#chatgpt-project-or-custom-gpt) ·
+[Gemini](#gemini-gem) ·
+[Claude Code](#claude-code) ·
+[Gemini CLI](#gemini-cli) ·
+[Codex](#codex-and-chatgpt-desktop) ·
+[any chat, one file](#any-chat-app-one-file)
+
+Eleven skills that run a LinkedIn account, in ChatGPT, Gemini, Claude and
+Codex. Free, MIT, no signup, no API key, nothing to connect.
 
 One of them writes your posts off 21 hook formulas. One comments on other
 people's posts. One handles the replies under yours. One scores your profile
@@ -14,14 +22,6 @@ of a draft, then scores what is left against a five-check detection panel
 before you ever see it.
 
 **Nothing gets posted until you say yes.** These skills write. You post.
-
-**Install for the AI you use:**
-[ChatGPT](#chatgpt-project-or-custom-gpt) ·
-[Gemini](#gemini-gem) ·
-[Claude Code](#claude-code) ·
-[Gemini CLI](#gemini-cli) ·
-[Codex](#codex-and-chatgpt-desktop) ·
-[any chat, one file](#any-chat-app-one-file)
 
 ## What this is
 
