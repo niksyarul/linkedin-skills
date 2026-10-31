@@ -22,15 +22,24 @@ If the request is unclear, list these in one line each and ask which one.
 
 The skills were written for a desktop agent. In this chat app, adapt them like this:
 
-1. Files. Any path under `~/.claude/linkedin/` means a file the user uploaded
-   to this chat or project: `voice.md` (their voice), `proof.md` (numbers they
-   stand behind), `plan.md` (this week's plan). If one is missing, carry on
-   without it and say once that uploading it gives better drafts.
-2. Scripts. `tools.zip` holds humanize.py, detect.py, provenance.py and the
-   JSON they read. When a skill says to run one, unzip it with Python, write
-   the draft to a file, and run the script from the `tools` folder. Show the
-   user the score output. If you cannot run code, do the same checks by hand
-   and say the scores are estimates.
+1. The user's files. `voice.md` (their voice), `proof.md` (numbers they stand
+   behind) and `plan.md` (this week's plan) are files the user attaches to the
+   chat. If one is missing, carry on without it and say once that attaching it
+   gives better drafts.
+2. Data and scripts. The `# Files` section at the end of `skills.md` holds
+   hooks.json (the 21 hook formulas), rubric.json (the profile score),
+   slop.json (the lexicon) and the humanizer scripts, each after a
+   `<!-- file: name -->` line. When a skill reads one of the JSON files, use
+   that copy. When a skill says to run a script and you can run Python,
+   extract the files first, then run the script as the skill says:
+
+       import re, pathlib
+       src = next(p for d in ("/mnt/data", ".") for p in pathlib.Path(d).glob("skills*.md")).read_text(encoding="utf-8")
+       for name, body in re.findall(r"<!-- file: (\S+) -->\n````\w*\n(.*?)\n````", src, re.S):
+           pathlib.Path(name).write_text(body + "\n", encoding="utf-8")
+
+   Show the user the score output. If you cannot run code, apply slop.json and
+   the scoring rules in detect.py by hand, and say the scores are estimates.
 3. Logs. events.py and outreach.py are not available, because nothing here is
    kept between chats. When a skill says to log a post or a follow-up, give the
    user the row to keep instead (date, URL, what was sent, when to follow up).
@@ -70,13 +79,13 @@ Ask for whichever the user has:
 - Or just the posts and their reaction counts, which is enough for a first
   pass.
 
-Also read `~/.claude/linkedin/events.csv` if it exists. It has one row per
+Also read `events.csv` if it exists. It has one row per
 published post with its URL, the text as published, the hook, format and
 theme, and the day-7 counts. Join the analytics to it by URL first, then by
 the published text. Never by the approved draft. Rows that already have
 counts need no analytics at all.
 
-If there is no `events.csv` but there is an older `~/.claude/linkedin/log.md`,
+If there is no `events.csv` but there is an older `log.md`,
 read that instead, and say that the join is by first line, so a post edited
 before publishing may not match.
 
@@ -109,7 +118,7 @@ them, and be willing to conclude something the user will not like:
   It is almost never the cause, and it is where people want it to be.
 - First-hour comments. Posts the user replied to inside an hour versus not.
 
-If `~/.claude/linkedin/plan.md` exists, compare its week with the
+If `plan.md` exists, compare its week with the
 `events.csv` rows dated in that week. Report planned against posted ("planned
 4, posted 3, the STORY slot was skipped"), and whether the posts that came
 from a planned slot did better or worse than the ones that did not. That is a
@@ -547,7 +556,7 @@ Every number or magnitude claim in a draft ("40%", "$12k", "eleven clients",
 `provenance.py` checks this mechanically:
 
 ```bash
-python3 provenance.py clean.txt ~/.claude/linkedin/proof.md [context.txt ...]
+python3 provenance.py clean.txt proof.md [context.txt ...]
 ```
 
 - `proof.md` is the user's ledger: one fact per line, optionally starting with
@@ -593,7 +602,7 @@ Never put "double" or "half" in the ledger to silence a false fail. That lets
    go again. It only ever names a gated check, never SPECIFICITY. Two rounds
    is normal. Five means the draft was written by formula, and the fix is a
    different draft, not more passes.
-6. `provenance.py clean.txt ~/.claude/linkedin/proof.md [context...]` must
+6. `provenance.py clean.txt proof.md [context...]` must
    print `OK`. This is a second required condition, alongside the verdict.
    Any number added during step 5 fails unless it is sourced. If a number
    fails, ask the user or put `{{your number}}` back. Never invent a source.
@@ -695,7 +704,7 @@ gets executed. Run it once a week, on the same day.
 
 ## Input
 
-If `~/.claude/linkedin/voice.md` and `events.csv` exist, read them - the plan
+If `voice.md` and `events.csv` exist, read them - the plan
 should not repeat a theme from the last fortnight, and the `kind=comment` rows
 show who the user has already engaged with this week. With no `events.csv`,
 read the older `log.md` if there is one. If they do not exist, ask
@@ -780,7 +789,7 @@ Say "write Tuesday" and I will draft it.
 For the follow-ups, run `python3 outreach.py due YYYY-MM-DD` (in the `/li-dm`
 folder) with the last day of the week, and list what it prints.
 
-Write the plan to `~/.claude/linkedin/plan.md`, replacing last week's, so
+Write the plan to `plan.md`, replacing last week's, so
 `/li-post` and `/li-audit` can read it. Keep it machine-readable: the first
 line is `week_of: YYYY-MM-DD` (the Monday), then one line per day in exactly
 the shape above (`TUE  8:15am  PROOF    #17 Time Anchor   - the idea`, or
@@ -808,12 +817,12 @@ posted it.
 
 ## Before you write
 
-0. Read `~/.claude/linkedin/plan.md` if it exists and its `week_of` is this
+0. Read `plan.md` if it exists and its `week_of` is this
    week. If today's line has a post slot, that is the brief: the slot type
    (PROOF, OPINION, TEACH, STORY), the hook formula and the idea. Say "This
    is Tuesday's PROOF slot from your plan" and draft that, unless the user
    asked for something else. Log the slot type in the `slot` field.
-1. Read `~/.claude/linkedin/voice.md` if it exists. That file is the user's
+1. Read `voice.md` if it exists. That file is the user's
    voice profile: how they talk, what they never say, who they are talking to.
    If it does not exist, ask for **three of their own past posts**, infer the
    voice from those, and write the file. Do not skip this and do not invent a
@@ -905,7 +914,7 @@ comments=9 reposts=2`. One question, then on to what the user came for.
   links. Put the link in the first comment and say so in the receipt.
 - **Never fabricate.** No invented metrics, clients, revenue figures or
   outcomes under the user's name, even as a placeholder. Numbers come from
-  `~/.claude/linkedin/proof.md` or from the user in chat. If a number is
+  `proof.md` or from the user in chat. If a number is
   needed and unknown, leave `{{your number}}` in the draft and flag it.
   `/li-human` will not release a draft with an unsourced number.
 
@@ -1168,3 +1177,1987 @@ with the source transcript as the provenance context file. A number not in
 the source is not in the post.
 Do not dump four finished posts at once - they will all sound the same, and
 the user will edit none of them.
+
+
+---
+
+# Files
+
+The data and scripts the skills use, byte for byte.
+
+<!-- file: hooks.json -->
+````json
+{
+  "version": "1.0",
+  "note": "21 hook formulas. Line 1 of a LinkedIn post is the whole game - the feed truncates at roughly 210 characters on desktop and 140 on mobile before 'see more', so the hook has to survive alone. Every formula here has a template, a filled example, what it is for, and the way it usually gets ruined.",
+  "rules": [
+    "One idea per hook. If it needs a comma splice, it needs two posts.",
+    "Line 2 is not a hook, it is the payoff of line 1. Never waste it on setup.",
+    "No question marks in line 1 unless the question is specific enough that only you could ask it.",
+    "Numbers beat adjectives. '$4,200' beats 'a lot of money' every time.",
+    "If the hook works with any other person's name on it, it is not your hook."
+  ],
+  "hooks": [
+    {
+      "id": 1,
+      "name": "Contrarian Take",
+      "template": "Everyone says {common advice}. After {specific experience}, I think that is wrong.",
+      "example": "Everyone says post daily. I posted 4x a week for a year and beat every daily poster in my niche.",
+      "best_for": "Establishing a point of view. Highest comment rate of any formula.",
+      "trap": "Being contrarian about something nobody believes. The belief has to be genuinely common."
+    },
+    {
+      "id": 2,
+      "name": "Number Reveal",
+      "template": "I {did thing} for {N} {days/weeks}. Here is what actually happened.",
+      "example": "I sent 400 cold DMs in 30 days. 11 replied. 2 became clients.",
+      "best_for": "Experiments, challenges, anything with a countable result.",
+      "trap": "Burying the number. Put it in line 1 or the formula does nothing."
+    },
+    {
+      "id": 3,
+      "name": "Mistake Confession",
+      "template": "{Specific cost} is what {one mistake} cost me.",
+      "example": "$18,000 is what not having a contract cost me last March.",
+      "best_for": "Trust. People forward the posts where you look bad.",
+      "trap": "A fake-humble mistake. 'I care too much' reads as a brag and kills the post."
+    },
+    {
+      "id": 4,
+      "name": "Before / After",
+      "template": "{Time ago} I was {low state}. Today I {high state}. The difference was {one thing}.",
+      "example": "18 months ago I was writing proposals at 2am. Today I send them in 6 minutes. One template did it.",
+      "best_for": "Proof you have travelled the distance your reader wants to travel.",
+      "trap": "Three-part transformations. Name one lever or the reader stops believing you."
+    },
+    {
+      "id": 5,
+      "name": "The List Promise",
+      "template": "{N} things I wish someone had told me before {milestone}.",
+      "example": "7 things I wish someone had told me before I hired my first employee.",
+      "best_for": "Saves. Highest save rate of the 21, which LinkedIn weights heavily.",
+      "trap": "N above 10. The reader does not believe you have 15 good ones, and you do not."
+    },
+    {
+      "id": 6,
+      "name": "Insider Secret",
+      "template": "After {N} years {doing thing}, here is the part nobody puts in the {job posting/course/pitch}.",
+      "example": "After 9 years in agency sales, here is the part nobody puts in the job posting.",
+      "best_for": "Credentialed takes. Works only if the years are real.",
+      "trap": "Promising a secret and delivering common knowledge. The comments will say so."
+    },
+    {
+      "id": 7,
+      "name": "The Callout",
+      "template": "If you are still {doing outdated thing}, stop.",
+      "example": "If you are still writing your LinkedIn posts in the LinkedIn composer, stop.",
+      "best_for": "Short posts with one instruction. Fastest to write of the 21.",
+      "trap": "Calling out something nobody does. Or worse, calling out your own audience with contempt."
+    },
+    {
+      "id": 8,
+      "name": "Question Trap",
+      "template": "{Specific scenario with a real cost}. What do you do?",
+      "example": "Your best client asks for a 40% discount and hints they will leave without it. What do you do?",
+      "best_for": "Comment volume. People answer scenarios, they ignore 'thoughts?'.",
+      "trap": "A question with an obvious right answer. There has to be a real fork."
+    },
+    {
+      "id": 9,
+      "name": "Story Cold Open",
+      "template": "\"{Line of dialogue}\"\\n\\n{Who said it, when, and why it mattered}.",
+      "example": "\"We are going with someone cheaper.\"\\n\\nThat email arrived 40 minutes after I sent my best proposal of the year.",
+      "best_for": "Long-form storytelling posts. Highest dwell time.",
+      "trap": "Dialogue nobody would actually say. Use the real line, including the ugly parts."
+    },
+    {
+      "id": 10,
+      "name": "The Receipt",
+      "template": "{Screenshot or hard number}. {One sentence of context}.",
+      "example": "3 clients, 11 days, zero calls booked. Here is the exact sequence that did it.",
+      "best_for": "Anything you can prove. Pair with an image and reach roughly doubles.",
+      "trap": "A receipt with no story attached. The number opens the door, the story is the room."
+    },
+    {
+      "id": 11,
+      "name": "Myth Bust",
+      "template": "{Popular explanation} is not why {bad outcome} is happening to you.",
+      "example": "The algorithm is not why your posts are dying.",
+      "best_for": "Reframing. Sets you up to deliver the real cause in line 3.",
+      "trap": "Busting the myth and never naming the replacement. Always name it."
+    },
+    {
+      "id": 12,
+      "name": "The Comparison",
+      "template": "{Expensive option} vs {cheap option}. {Surprising verdict}.",
+      "example": "A $12,000 brand agency vs a $20 tool and a weekend. The weekend won.",
+      "best_for": "Tool and process posts. Very high share rate.",
+      "trap": "An unfair comparison. Concede what the expensive option genuinely does better."
+    },
+    {
+      "id": 13,
+      "name": "Permission Slip",
+      "template": "You are allowed to {thing the reader feels guilty about}.",
+      "example": "You are allowed to turn down work that pays well and makes you miserable.",
+      "best_for": "Reach beyond your niche. These travel further than tactical posts.",
+      "trap": "Generic self-care. It has to be specific to the working life of your reader."
+    },
+    {
+      "id": 14,
+      "name": "Pattern Interrupt",
+      "template": "{One word or three-word line, full stop.}",
+      "example": "I got fired.",
+      "best_for": "Stopping the scroll cold. Whitespace does the work.",
+      "trap": "Overuse. Once a month. Every post starting this way reads as a tic."
+    },
+    {
+      "id": 15,
+      "name": "The Warning",
+      "template": "{Common practice} is quietly costing you {specific thing they care about}.",
+      "example": "Your 'quick call to align' is quietly costing you six hours a week.",
+      "best_for": "Problem-aware audiences who have not connected cause to cost.",
+      "trap": "Fear with no exit. Give the fix in the same post or you have just made someone anxious."
+    },
+    {
+      "id": 16,
+      "name": "Good vs Great",
+      "template": "Good {role} {do X}. Great {role} {do Y}.",
+      "example": "Good salespeople answer the question. Great salespeople ask why it was asked.",
+      "best_for": "Quotable one-liners. Screenshot bait.",
+      "trap": "A distinction that is really just 'try harder'. Y has to be a different action, not more effort."
+    },
+    {
+      "id": 17,
+      "name": "Time Anchor",
+      "template": "{Task} used to take me {long time}. It now takes {short time}.",
+      "example": "Writing a week of posts used to take me 5 hours. It now takes 20 minutes.",
+      "best_for": "Tool, system and automation posts. The strongest hook shape for a how-to.",
+      "trap": "An unbelievable ratio. 5 hours to 20 minutes lands. 5 hours to 8 seconds does not."
+    },
+    {
+      "id": 18,
+      "name": "The Unpopular Rule",
+      "template": "I do not {widely accepted practice}. Ever. Here is why.",
+      "example": "I do not take discovery calls. Ever.",
+      "best_for": "Positioning. Attracts the right clients by repelling the wrong ones.",
+      "trap": "A rule you break constantly. Someone in the comments will know."
+    },
+    {
+      "id": 19,
+      "name": "Curiosity Gap",
+      "template": "The {superlative} {thing} I ever {verb} {broke the obvious rule}.",
+      "example": "The best hire I ever made failed the interview.",
+      "best_for": "Openers that force the 'see more' tap.",
+      "trap": "A gap you never close. Pay it off by line 4 or you have written clickbait."
+    },
+    {
+      "id": 20,
+      "name": "The Walk-Away",
+      "template": "I {fired/quit/deleted/cancelled} {valuable thing}. {Result}.",
+      "example": "I fired my highest-paying client in January. Revenue is up 30%.",
+      "best_for": "Values posts with a business result attached. Very high engagement.",
+      "trap": "Walking away with no cost. Name what it actually cost you or it reads as theatre."
+    },
+    {
+      "id": 21,
+      "name": "The Direct Value",
+      "template": "Here is the exact {artifact} I used to {specific outcome}. Steal it.",
+      "example": "Here is the exact 4-line email I used to reopen 3 dead deals. Steal it.",
+      "best_for": "Lead magnets and comment-for-link posts. Highest conversion of the 21.",
+      "trap": "Making them ask for something you could have just posted. Give the artifact away in the post."
+    }
+  ]
+}
+````
+
+<!-- file: rubric.json -->
+````json
+{
+  "version": "1.0",
+  "total": 100,
+  "note": "Twelve items. Score each honestly - a generous score helps nobody. Most first-pass profiles land in the 30s and 40s.",
+  "items": [
+    {
+      "id": "headline",
+      "points": 12,
+      "full_marks": "States who you help and what changes for them, carries one piece of proof, and is not the job title. Uses the 220 characters, not 60."
+    },
+    {
+      "id": "about_open",
+      "points": 10,
+      "full_marks": "First two lines - everything visible before 'see more' - name the reader's problem. No 'passionate about', no third-person bio, no opening with your own name."
+    },
+    {
+      "id": "about_body",
+      "points": 10,
+      "full_marks": "Written to one person in second person: their problem, what you do, one number as proof, what to do next. Under 1,400 characters."
+    },
+    {
+      "id": "featured",
+      "points": 8,
+      "full_marks": "Three items: best-performing post, a proof asset, and the way to contact you. Nothing empty, nothing stale."
+    },
+    {
+      "id": "banner",
+      "points": 6,
+      "full_marks": "One line of positioning and one way to reach you. Not the default gradient, not a stock skyline."
+    },
+    {
+      "id": "photo",
+      "points": 6,
+      "full_marks": "Face fills roughly 60% of the frame, eyes visible, shot in the last two years, background not distracting."
+    },
+    {
+      "id": "current_role",
+      "points": 10,
+      "full_marks": "One line of scope, then two to three outcome bullets with numbers. Duties are not outcomes."
+    },
+    {
+      "id": "experience_depth",
+      "points": 8,
+      "full_marks": "Last two roles detailed, everything older than ten years compressed to a single line each."
+    },
+    {
+      "id": "skills",
+      "points": 6,
+      "full_marks": "Top three skills are the three you want to be hired for and are endorsed. The other 47 are noise."
+    },
+    {
+      "id": "recommendations",
+      "points": 8,
+      "full_marks": "At least three received in the last two years, each naming a specific outcome rather than character."
+    },
+    {
+      "id": "activity",
+      "points": 10,
+      "full_marks": "Posted or commented in the last seven days. An empty activity feed reads as an abandoned profile."
+    },
+    {
+      "id": "contact",
+      "points": 6,
+      "full_marks": "Custom URL, a working email or booking link in contact info, and the same handle as your other platforms."
+    }
+  ]
+}
+````
+
+<!-- file: slop.json -->
+````json
+{
+  "version": "1.0",
+  "note": "Lexicon used by humanize.py and detect.py. Replacements are plain-English and keep the sentence grammatical. Edit freely - it is meant to be yours.",
+  "invisible": [
+    {
+      "cp": "U+200B",
+      "name": "ZERO WIDTH SPACE",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200C",
+      "name": "ZERO WIDTH NON-JOINER",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200D",
+      "name": "ZERO WIDTH JOINER",
+      "action": "delete"
+    },
+    {
+      "cp": "U+2060",
+      "name": "WORD JOINER",
+      "action": "delete"
+    },
+    {
+      "cp": "U+FEFF",
+      "name": "ZERO WIDTH NO-BREAK SPACE / BOM",
+      "action": "delete"
+    },
+    {
+      "cp": "U+00AD",
+      "name": "SOFT HYPHEN",
+      "action": "delete"
+    },
+    {
+      "cp": "U+180E",
+      "name": "MONGOLIAN VOWEL SEPARATOR",
+      "action": "delete"
+    },
+    {
+      "cp": "U+061C",
+      "name": "ARABIC LETTER MARK",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200E",
+      "name": "LEFT-TO-RIGHT MARK",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200F",
+      "name": "RIGHT-TO-LEFT MARK",
+      "action": "delete"
+    },
+    {
+      "cp": "U+E0000-U+E007F",
+      "name": "TAG CHARACTERS (invisible ASCII smuggling)",
+      "action": "delete"
+    },
+    {
+      "cp": "U+00A0",
+      "name": "NO-BREAK SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+202F",
+      "name": "NARROW NO-BREAK SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2009",
+      "name": "THIN SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2007",
+      "name": "FIGURE SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2003",
+      "name": "EM SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2002",
+      "name": "EN SPACE",
+      "action": "space"
+    }
+  ],
+  "typographic": [
+    {
+      "from": "—",
+      "name": "EM DASH",
+      "to": ", "
+    },
+    {
+      "from": "–",
+      "name": "EN DASH",
+      "to": "-"
+    },
+    {
+      "from": "‘",
+      "name": "LEFT SINGLE QUOTE",
+      "to": "'"
+    },
+    {
+      "from": "’",
+      "name": "RIGHT SINGLE QUOTE",
+      "to": "'"
+    },
+    {
+      "from": "“",
+      "name": "LEFT DOUBLE QUOTE",
+      "to": "\""
+    },
+    {
+      "from": "”",
+      "name": "RIGHT DOUBLE QUOTE",
+      "to": "\""
+    },
+    {
+      "from": "…",
+      "name": "HORIZONTAL ELLIPSIS",
+      "to": "..."
+    },
+    {
+      "from": "′",
+      "name": "PRIME",
+      "to": "'"
+    },
+    {
+      "from": "·",
+      "name": "MIDDLE DOT",
+      "to": "-"
+    },
+    {
+      "from": "•",
+      "name": "BULLET",
+      "to": "-"
+    },
+    {
+      "from": "→",
+      "name": "RIGHTWARDS ARROW",
+      "to": "->"
+    }
+  ],
+  "words": [
+    {
+      "find": "delve into",
+      "replace": "look at",
+      "family": "verbs"
+    },
+    {
+      "find": "delve",
+      "replace": "look",
+      "family": "verbs"
+    },
+    {
+      "find": "dive deep into",
+      "replace": "get into",
+      "family": "verbs"
+    },
+    {
+      "find": "deep dive",
+      "replace": "breakdown",
+      "family": "nouns"
+    },
+    {
+      "find": "leverage",
+      "replace": "use",
+      "family": "verbs"
+    },
+    {
+      "find": "leveraging",
+      "replace": "using",
+      "family": "verbs"
+    },
+    {
+      "find": "utilize",
+      "replace": "use",
+      "family": "verbs"
+    },
+    {
+      "find": "utilizing",
+      "replace": "using",
+      "family": "verbs"
+    },
+    {
+      "find": "harness",
+      "replace": "use",
+      "family": "verbs"
+    },
+    {
+      "find": "embark on",
+      "replace": "start",
+      "family": "verbs"
+    },
+    {
+      "find": "foster",
+      "replace": "build",
+      "family": "verbs"
+    },
+    {
+      "find": "facilitate",
+      "replace": "help",
+      "family": "verbs"
+    },
+    {
+      "find": "showcase",
+      "replace": "show",
+      "family": "verbs"
+    },
+    {
+      "find": "unlock",
+      "replace": "get",
+      "family": "verbs"
+    },
+    {
+      "find": "elevate",
+      "replace": "improve",
+      "family": "verbs"
+    },
+    {
+      "find": "streamline",
+      "replace": "simplify",
+      "family": "verbs"
+    },
+    {
+      "find": "spearhead",
+      "replace": "lead",
+      "family": "verbs"
+    },
+    {
+      "find": "underscore",
+      "replace": "show",
+      "family": "verbs"
+    },
+    {
+      "find": "underscores",
+      "replace": "shows",
+      "family": "verbs"
+    },
+    {
+      "find": "cultivate",
+      "replace": "build",
+      "family": "verbs"
+    },
+    {
+      "find": "amplify",
+      "replace": "boost",
+      "family": "verbs"
+    },
+    {
+      "find": "curate",
+      "replace": "pick",
+      "family": "verbs"
+    },
+    {
+      "find": "curated",
+      "replace": "picked",
+      "family": "verbs"
+    },
+    {
+      "find": "empower",
+      "replace": "let",
+      "family": "verbs"
+    },
+    {
+      "find": "revolutionize",
+      "replace": "change",
+      "family": "verbs"
+    },
+    {
+      "find": "transformative",
+      "replace": "big",
+      "family": "adjectives"
+    },
+    {
+      "find": "robust",
+      "replace": "solid",
+      "family": "adjectives"
+    },
+    {
+      "find": "seamless",
+      "replace": "clean",
+      "family": "adjectives"
+    },
+    {
+      "find": "seamlessly",
+      "replace": "cleanly",
+      "family": "adjectives"
+    },
+    {
+      "find": "pivotal",
+      "replace": "key",
+      "family": "adjectives"
+    },
+    {
+      "find": "crucial",
+      "replace": "important",
+      "family": "adjectives"
+    },
+    {
+      "find": "vital",
+      "replace": "important",
+      "family": "adjectives"
+    },
+    {
+      "find": "comprehensive",
+      "replace": "complete",
+      "family": "adjectives"
+    },
+    {
+      "find": "cutting-edge",
+      "replace": "new",
+      "family": "adjectives"
+    },
+    {
+      "find": "game-changing",
+      "replace": "big",
+      "family": "adjectives"
+    },
+    {
+      "find": "game-changer",
+      "replace": "big deal",
+      "family": "nouns"
+    },
+    {
+      "find": "groundbreaking",
+      "replace": "new",
+      "family": "adjectives"
+    },
+    {
+      "find": "unparalleled",
+      "replace": "unmatched",
+      "family": "adjectives"
+    },
+    {
+      "find": "invaluable",
+      "replace": "useful",
+      "family": "adjectives"
+    },
+    {
+      "find": "meticulous",
+      "replace": "careful",
+      "family": "adjectives"
+    },
+    {
+      "find": "meticulously",
+      "replace": "carefully",
+      "family": "adjectives"
+    },
+    {
+      "find": "myriad of",
+      "replace": "many",
+      "family": "adjectives"
+    },
+    {
+      "find": "myriad",
+      "replace": "many",
+      "family": "adjectives"
+    },
+    {
+      "find": "multifaceted",
+      "replace": "complicated",
+      "family": "adjectives"
+    },
+    {
+      "find": "holistic",
+      "replace": "whole",
+      "family": "adjectives"
+    },
+    {
+      "find": "bespoke",
+      "replace": "custom",
+      "family": "adjectives"
+    },
+    {
+      "find": "innovative",
+      "replace": "new",
+      "family": "adjectives"
+    },
+    {
+      "find": "profound",
+      "replace": "big",
+      "family": "adjectives"
+    },
+    {
+      "find": "remarkable",
+      "replace": "notable",
+      "family": "adjectives"
+    },
+    {
+      "find": "compelling",
+      "replace": "convincing",
+      "family": "adjectives"
+    },
+    {
+      "find": "tapestry",
+      "replace": "mix",
+      "family": "nouns"
+    },
+    {
+      "find": "realm",
+      "replace": "world",
+      "family": "nouns"
+    },
+    {
+      "find": "landscape",
+      "replace": "market",
+      "family": "nouns"
+    },
+    {
+      "find": "journey",
+      "replace": "process",
+      "family": "nouns"
+    },
+    {
+      "find": "testament to",
+      "replace": "proof of",
+      "family": "nouns"
+    },
+    {
+      "find": "cornerstone",
+      "replace": "base",
+      "family": "nouns"
+    },
+    {
+      "find": "beacon",
+      "replace": "signal",
+      "family": "nouns"
+    },
+    {
+      "find": "paradigm",
+      "replace": "model",
+      "family": "nouns"
+    },
+    {
+      "find": "synergy",
+      "replace": "overlap",
+      "family": "nouns"
+    },
+    {
+      "find": "ecosystem",
+      "replace": "system",
+      "family": "nouns"
+    },
+    {
+      "find": "treasure trove",
+      "replace": "pile",
+      "family": "nouns"
+    },
+    {
+      "find": "plethora of",
+      "replace": "lots of",
+      "family": "nouns"
+    },
+    {
+      "find": "plethora",
+      "replace": "lots",
+      "family": "nouns"
+    },
+    {
+      "find": "arsenal",
+      "replace": "set",
+      "family": "nouns"
+    },
+    {
+      "find": "north star",
+      "replace": "goal",
+      "family": "nouns"
+    },
+    {
+      "find": "moreover",
+      "replace": "also",
+      "family": "connectives"
+    },
+    {
+      "find": "furthermore",
+      "replace": "also",
+      "family": "connectives"
+    },
+    {
+      "find": "additionally",
+      "replace": "also",
+      "family": "connectives"
+    },
+    {
+      "find": "nevertheless",
+      "replace": "still",
+      "family": "connectives"
+    },
+    {
+      "find": "consequently",
+      "replace": "so",
+      "family": "connectives"
+    },
+    {
+      "find": "thus",
+      "replace": "so",
+      "family": "connectives"
+    },
+    {
+      "find": "hence",
+      "replace": "so",
+      "family": "connectives"
+    },
+    {
+      "find": "notably",
+      "replace": "",
+      "family": "connectives"
+    },
+    {
+      "find": "importantly",
+      "replace": "",
+      "family": "connectives"
+    },
+    {
+      "find": "ultimately",
+      "replace": "in the end",
+      "family": "connectives"
+    },
+    {
+      "find": "in essence",
+      "replace": "basically",
+      "family": "connectives"
+    },
+    {
+      "find": "in conclusion",
+      "replace": "so",
+      "family": "connectives"
+    },
+    {
+      "find": "when it comes to",
+      "replace": "with",
+      "family": "connectives"
+    },
+    {
+      "find": "in order to",
+      "replace": "to",
+      "family": "connectives"
+    },
+    {
+      "find": "a wide range of",
+      "replace": "many",
+      "family": "connectives"
+    },
+    {
+      "find": "it is worth noting that",
+      "replace": "note that",
+      "family": "connectives"
+    }
+  ],
+  "phrases": [
+    {
+      "find": "in today's fast-paced world",
+      "replace": "right now",
+      "family": "openers"
+    },
+    {
+      "find": "in today's digital age",
+      "replace": "right now",
+      "family": "openers"
+    },
+    {
+      "find": "in the ever-evolving landscape of",
+      "replace": "in",
+      "family": "openers"
+    },
+    {
+      "find": "in the ever-changing world of",
+      "replace": "in",
+      "family": "openers"
+    },
+    {
+      "find": "let's face it",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "here's the thing",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "picture this",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "imagine a world where",
+      "replace": "imagine if",
+      "family": "openers"
+    },
+    {
+      "find": "it's no secret that",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "we've all been there",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "let that sink in",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "the choice is yours",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "food for thought",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "the future is here",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "what are your thoughts?",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "drop a comment below",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "at the end of the day",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "needle-moving",
+      "replace": "useful",
+      "family": "closers"
+    },
+    {
+      "find": "move the needle",
+      "replace": "make a difference",
+      "family": "closers"
+    },
+    {
+      "find": "a testament to",
+      "replace": "proof of",
+      "family": "nouns"
+    },
+    {
+      "find": "had the opportunity to",
+      "replace": "got to",
+      "family": "connectives"
+    },
+    {
+      "find": "i am excited to announce",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "i'm thrilled to share",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "i am humbled to",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "without further ado",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "buckle up",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "the harsh truth is",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "spoiler alert",
+      "replace": "",
+      "family": "openers"
+    },
+    {
+      "find": "read that again",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "you're welcome",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "save this for later",
+      "replace": "",
+      "family": "closers"
+    },
+    {
+      "find": "who's with me",
+      "replace": "",
+      "family": "closers"
+    }
+  ],
+  "structures": [
+    {
+      "id": "not-just",
+      "regex": "(?i)\\bit'?s not (?:just|only) [^.!?\\n]{2,60}[,.] it'?s\\b",
+      "name": "\"It's not just X, it's Y\"",
+      "fix": "Say the one thing you actually mean. Delete the setup half."
+    },
+    {
+      "id": "not-only",
+      "regex": "(?i)\\bnot only\\b[^.!?\\n]{2,80}\\bbut also\\b",
+      "name": "\"Not only X but also Y\"",
+      "fix": "Split into two sentences, or drop the weaker half."
+    },
+    {
+      "id": "isnt-about",
+      "regex": "(?i)\\b(?:this|it) is(?:n'?t| not) about [^.!?\\n]{2,60}[.!] it'?s about\\b",
+      "name": "\"It isn't about X. It's about Y.\"",
+      "fix": "Lead with Y. The reversal is the tell."
+    },
+    {
+      "id": "the-result",
+      "regex": "(?i)^\\s*(?:the result|the best part|the kicker|the catch)\\?\\s*$",
+      "name": "One-word rhetorical question line",
+      "fix": "Answer it inline instead of staging a reveal."
+    },
+    {
+      "id": "heres-what",
+      "regex": "(?i)\\bhere'?s what (?:i|we) learned\\b",
+      "name": "\"Here's what I learned\"",
+      "fix": "State the lesson. Skip the announcement."
+    },
+    {
+      "id": "triad",
+      "regex": "(?i)\\b\\w+, \\w+, and \\w+\\.",
+      "name": "Rule-of-three triad",
+      "fix": "Two items or four. Three is the model's default rhythm."
+    },
+    {
+      "id": "rocket",
+      "regex": "[\\U0001F680\\U0001F525\\U0001F4A1\\u2728\\U0001F3AF]",
+      "name": "Rocket / fire / bulb / sparkle / dart emoji",
+      "fix": "One emoji max, and not one of these five."
+    },
+    {
+      "id": "hashtag-wall",
+      "regex": "(?:#\\w+[ \\t]*){5,}",
+      "name": "Hashtag wall (5+)",
+      "fix": "Three hashtags. LinkedIn stopped rewarding the wall."
+    },
+    {
+      "id": "as-an-ai",
+      "regex": "(?i)\\bas an ai\\b|\\bas a language model\\b",
+      "name": "Model self-reference",
+      "fix": "Delete the sentence."
+    },
+    {
+      "id": "in-summary",
+      "regex": "(?i)^\\s*(?:in summary|to summarize|in conclusion)\\b",
+      "name": "Essay-closer opener",
+      "fix": "A post does not need a conclusion paragraph."
+    },
+    {
+      "id": "engagement-bait",
+      "regex": "(?i)\\b(?:agree\\?|thoughts\\?|who else\\b|am i wrong\\?)\\s*$",
+      "name": "Reflex engagement bait",
+      "fix": "Ask a question only you could ask, about the specific thing above it."
+    }
+  ]
+}
+````
+
+<!-- file: artefacts-only.json -->
+````json
+{
+  "version": "1.0",
+  "note": "Generated from slop.json with words and phrases emptied: cleans artefacts and typography, never swaps words. Regenerate when slop.json changes (test_li_human.py checks they match).",
+  "invisible": [
+    {
+      "cp": "U+200B",
+      "name": "ZERO WIDTH SPACE",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200C",
+      "name": "ZERO WIDTH NON-JOINER",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200D",
+      "name": "ZERO WIDTH JOINER",
+      "action": "delete"
+    },
+    {
+      "cp": "U+2060",
+      "name": "WORD JOINER",
+      "action": "delete"
+    },
+    {
+      "cp": "U+FEFF",
+      "name": "ZERO WIDTH NO-BREAK SPACE / BOM",
+      "action": "delete"
+    },
+    {
+      "cp": "U+00AD",
+      "name": "SOFT HYPHEN",
+      "action": "delete"
+    },
+    {
+      "cp": "U+180E",
+      "name": "MONGOLIAN VOWEL SEPARATOR",
+      "action": "delete"
+    },
+    {
+      "cp": "U+061C",
+      "name": "ARABIC LETTER MARK",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200E",
+      "name": "LEFT-TO-RIGHT MARK",
+      "action": "delete"
+    },
+    {
+      "cp": "U+200F",
+      "name": "RIGHT-TO-LEFT MARK",
+      "action": "delete"
+    },
+    {
+      "cp": "U+E0000-U+E007F",
+      "name": "TAG CHARACTERS (invisible ASCII smuggling)",
+      "action": "delete"
+    },
+    {
+      "cp": "U+00A0",
+      "name": "NO-BREAK SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+202F",
+      "name": "NARROW NO-BREAK SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2009",
+      "name": "THIN SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2007",
+      "name": "FIGURE SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2003",
+      "name": "EM SPACE",
+      "action": "space"
+    },
+    {
+      "cp": "U+2002",
+      "name": "EN SPACE",
+      "action": "space"
+    }
+  ],
+  "typographic": [
+    {
+      "from": "—",
+      "name": "EM DASH",
+      "to": ", "
+    },
+    {
+      "from": "–",
+      "name": "EN DASH",
+      "to": "-"
+    },
+    {
+      "from": "‘",
+      "name": "LEFT SINGLE QUOTE",
+      "to": "'"
+    },
+    {
+      "from": "’",
+      "name": "RIGHT SINGLE QUOTE",
+      "to": "'"
+    },
+    {
+      "from": "“",
+      "name": "LEFT DOUBLE QUOTE",
+      "to": "\""
+    },
+    {
+      "from": "”",
+      "name": "RIGHT DOUBLE QUOTE",
+      "to": "\""
+    },
+    {
+      "from": "…",
+      "name": "HORIZONTAL ELLIPSIS",
+      "to": "..."
+    },
+    {
+      "from": "′",
+      "name": "PRIME",
+      "to": "'"
+    },
+    {
+      "from": "·",
+      "name": "MIDDLE DOT",
+      "to": "-"
+    },
+    {
+      "from": "•",
+      "name": "BULLET",
+      "to": "-"
+    },
+    {
+      "from": "→",
+      "name": "RIGHTWARDS ARROW",
+      "to": "->"
+    }
+  ],
+  "words": [],
+  "phrases": [],
+  "structures": [
+    {
+      "id": "not-just",
+      "regex": "(?i)\\bit'?s not (?:just|only) [^.!?\\n]{2,60}[,.] it'?s\\b",
+      "name": "\"It's not just X, it's Y\"",
+      "fix": "Say the one thing you actually mean. Delete the setup half."
+    },
+    {
+      "id": "not-only",
+      "regex": "(?i)\\bnot only\\b[^.!?\\n]{2,80}\\bbut also\\b",
+      "name": "\"Not only X but also Y\"",
+      "fix": "Split into two sentences, or drop the weaker half."
+    },
+    {
+      "id": "isnt-about",
+      "regex": "(?i)\\b(?:this|it) is(?:n'?t| not) about [^.!?\\n]{2,60}[.!] it'?s about\\b",
+      "name": "\"It isn't about X. It's about Y.\"",
+      "fix": "Lead with Y. The reversal is the tell."
+    },
+    {
+      "id": "the-result",
+      "regex": "(?i)^\\s*(?:the result|the best part|the kicker|the catch)\\?\\s*$",
+      "name": "One-word rhetorical question line",
+      "fix": "Answer it inline instead of staging a reveal."
+    },
+    {
+      "id": "heres-what",
+      "regex": "(?i)\\bhere'?s what (?:i|we) learned\\b",
+      "name": "\"Here's what I learned\"",
+      "fix": "State the lesson. Skip the announcement."
+    },
+    {
+      "id": "triad",
+      "regex": "(?i)\\b\\w+, \\w+, and \\w+\\.",
+      "name": "Rule-of-three triad",
+      "fix": "Two items or four. Three is the model's default rhythm."
+    },
+    {
+      "id": "rocket",
+      "regex": "[\\U0001F680\\U0001F525\\U0001F4A1\\u2728\\U0001F3AF]",
+      "name": "Rocket / fire / bulb / sparkle / dart emoji",
+      "fix": "One emoji max, and not one of these five."
+    },
+    {
+      "id": "hashtag-wall",
+      "regex": "(?:#\\w+[ \\t]*){5,}",
+      "name": "Hashtag wall (5+)",
+      "fix": "Three hashtags. LinkedIn stopped rewarding the wall."
+    },
+    {
+      "id": "as-an-ai",
+      "regex": "(?i)\\bas an ai\\b|\\bas a language model\\b",
+      "name": "Model self-reference",
+      "fix": "Delete the sentence."
+    },
+    {
+      "id": "in-summary",
+      "regex": "(?i)^\\s*(?:in summary|to summarize|in conclusion)\\b",
+      "name": "Essay-closer opener",
+      "fix": "A post does not need a conclusion paragraph."
+    },
+    {
+      "id": "engagement-bait",
+      "regex": "(?i)\\b(?:agree\\?|thoughts\\?|who else\\b|am i wrong\\?)\\s*$",
+      "name": "Reflex engagement bait",
+      "fix": "Ask a question only you could ask, about the specific thing above it."
+    }
+  ]
+}
+````
+
+<!-- file: humanize.py -->
+````python
+#!/usr/bin/env python3
+"""
+humanize.py - strip the machine fingerprint out of a draft.
+
+Three passes, in this order:
+
+  1. INVISIBLE   delete or normalise the characters a human keyboard never
+                 produces: zero-width joiners, word joiners, soft hyphens,
+                 BOMs, Unicode tag characters, non-breaking and narrow spaces.
+                 These survive copy-paste and are the most mechanical tell in
+                 any generated text.
+  2. TYPOGRAPHIC em dash -> comma, en dash -> hyphen, curly quotes -> straight,
+                 ellipsis -> three dots, bullet -> hyphen.
+  3. LEXICAL     replace the slop lexicon in slop.json with plain words,
+                 preserving capitalisation and leaving URLs untouched.
+
+Structural tells (rule-of-three, "not just X, it's Y", hashtag walls) are
+REPORTED, never auto-rewritten - rewriting a sentence's shape needs judgement,
+so that is the model's job, not a regex's.
+
+Usage
+  python3 humanize.py draft.txt
+  python3 humanize.py draft.txt --report
+  pbpaste | python3 humanize.py - --report
+  python3 humanize.py draft.txt --json
+  python3 humanize.py draft.txt -o clean.txt
+"""
+
+import argparse
+import json
+import os
+import re
+import sys
+import unicodedata
+
+import joiners
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+LEX = os.path.join(HERE, "slop.json")
+
+URL_RE = re.compile(r"https?://\S+|www\.\S+|\S+@\S+\.\S+")
+SENT_RE = re.compile(r"[^.!?\n]+[.!?]*")
+
+
+def load_lexicon(path=LEX):
+    with open(path, encoding="utf-8") as fh:
+        return json.load(fh)
+
+
+def _cp(spec):
+    """'U+200B' -> '\\u200b';  'U+E0000-U+E007F' -> (start, end)."""
+    if "-" in spec:
+        a, b = spec.split("-")
+        return (int(a[2:], 16), int(b[2:], 16))
+    return int(spec[2:], 16)
+
+
+def protect_urls(text):
+    """Swap URLs for placeholders so no pass rewrites inside a link."""
+    found = []
+
+    def stash(m):
+        found.append(m.group(0))
+        return f"\x00URL{len(found) - 1}\x00"
+
+    return URL_RE.sub(stash, text), found
+
+
+def restore_urls(text, found):
+    for i, url in enumerate(found):
+        text = text.replace(f"\x00URL{i}\x00", url)
+    return text
+
+
+def pass_invisible(text, lex):
+    """Delete or space-normalise invisible characters. Returns (text, hits)."""
+    hits = []
+    for entry in lex["invisible"]:
+        cp = _cp(entry["cp"])
+        if isinstance(cp, tuple):
+            pattern = "[" + re.escape(chr(cp[0])) + "-" + re.escape(chr(cp[1])) + "]"
+        else:
+            pattern = re.escape(chr(cp))
+        n = len(re.findall(pattern, text))
+        if n:
+            hits.append({"name": entry["cp"] + " " + entry["name"], "count": n,
+                         "action": entry["action"]})
+            text = re.sub(pattern, "" if entry["action"] == "delete" else " ", text)
+    # Any remaining Cf (format) character is invisible by definition.
+    stray = [c for c in text if unicodedata.category(c) == "Cf"]
+    if stray:
+        hits.append({"name": "other invisible format chars", "count": len(stray),
+                     "action": "delete"})
+        text = "".join(c for c in text if unicodedata.category(c) != "Cf")
+    return text, hits
+
+
+def pass_typographic(text, lex):
+    hits = []
+    for entry in lex["typographic"]:
+        ch = entry["from"]
+        n = text.count(ch)
+        if not n:
+            continue
+        hits.append({"name": f"{ch} {entry['name']}", "count": n, "to": entry["to"].strip() or "(space)"})
+        if ch == "—":
+            # " word — word " and "word—word" both collapse to a comma + space.
+            text = re.sub(r"\s*—\s*", ", ", text)
+        elif ch == "–":
+            text = re.sub(r"\s*–\s*(?=\d)", "-", text)      # 5–10  -> 5-10
+            text = re.sub(r"\s+–\s+", ", ", text)            # used as em dash
+            text = text.replace("–", "-")
+        else:
+            text = text.replace(ch, entry["to"])
+    # A comma inserted before existing punctuation reads wrong.
+    text = re.sub(r",\s*([,.;:!?])", r"\1", text)
+    text = re.sub(r",\s*\n", "\n", text)
+    return text, hits
+
+
+def _match_case(src, repl):
+    if not repl:
+        return repl
+    if src.isupper() and len(src) > 1:
+        return repl.upper()
+    if src[0].isupper():
+        return repl[0].upper() + repl[1:]
+    return repl
+
+
+def pass_lexical(text, lex):
+    """Replace slop words and phrases. Longest first so phrases win."""
+    hits = []
+    entries = sorted(lex["phrases"] + lex["words"],
+                     key=lambda e: len(e["find"]), reverse=True)
+    for entry in entries:
+        find = entry["find"]
+        pattern = re.compile(r"\b" + re.escape(find).replace(r"\ ", r"\s+") + r"\b",
+                             re.IGNORECASE)
+        found = pattern.findall(text)
+        if not found:
+            continue
+        hits.append({"find": find, "replace": entry["replace"] or "(deleted)",
+                     "count": len(found), "family": entry["family"]})
+        text = pattern.sub(lambda m: _match_case(m.group(0), entry["replace"]), text)
+    # Clean up after deletions.
+    text = re.sub(r"[ \t]{2,}", " ", text)
+    text = re.sub(r"(?m)^[ \t]*([,.;:])\s*", "", text)
+    text = re.sub(r"\s+([,.;:!?])", r"\1", text)
+    text = re.sub(r"(?m)^[ \t]+$", "", text)
+    text = re.sub(r"\n{3,}", "\n\n", text)
+    # An em dash that became a comma, followed by a sentence connective, leaves
+    # a splice ("is important, also, it's proof"). Promote it to a full stop.
+    text = re.sub(r",\s*(also|so|still|basically|in the end)\s*,\s*",
+                  lambda m: ". " + m.group(1)[0].upper() + m.group(1)[1:] + ", ", text)
+    return text, hits
+
+
+def scan_structures(text, lex):
+    flags = []
+    for s in lex["structures"]:
+        try:
+            pattern = re.compile(s["regex"], re.MULTILINE)
+        except re.error:
+            continue
+        found = pattern.findall(text)
+        if found:
+            flags.append({"name": s["name"], "count": len(found), "fix": s["fix"]})
+    # Sentence-length uniformity is structural too.
+    lens = [len(s.split()) for s in SENT_RE.findall(text) if len(s.split()) > 2]
+    if len(lens) >= 4:
+        mean = sum(lens) / len(lens)
+        var = sum((n - mean) ** 2 for n in lens) / len(lens)
+        cv = (var ** 0.5) / mean if mean else 0
+        if cv < 0.35:
+            flags.append({
+                "name": f"Uniform sentence length (variation {cv:.2f})",
+                "count": len(lens),
+                "fix": "Break one sentence in half. Let another run long. Machines write even.",
+            })
+    return flags
+
+
+def humanize(text, lex):
+    # Invisible pass first: a URL match (\S+) would otherwise carry hidden characters through.
+    text, inv = joiners.clean_around(text, lambda t: pass_invisible(t, lex))
+    text, urls = protect_urls(text)
+    text, typo = pass_typographic(text, lex)
+    text, lexi = pass_lexical(text, lex)
+    text = restore_urls(text, urls)
+    return text.strip() + "\n", {
+        "invisible": inv,
+        "typographic": typo,
+        "lexical": lexi,
+        "structures": scan_structures(text, lex),
+    }
+
+
+def render_report(report, out=sys.stderr):
+    def head(title):
+        print(f"\n{title}\n" + "-" * len(title), file=out)
+
+    total = sum(h["count"] for h in report["invisible"]) \
+        + sum(h["count"] for h in report["typographic"]) \
+        + sum(h["count"] for h in report["lexical"])
+
+    head("HUMANIZE REPORT")
+    print(f"{total} machine artefacts removed, "
+          f"{len(report['structures'])} structural tells flagged for rewrite", file=out)
+
+    if report["invisible"]:
+        head("1. INVISIBLE CHARACTERS")
+        for h in report["invisible"]:
+            print(f"  {h['count']:>3}x  {h['name']}  -> {h['action']}", file=out)
+    if report["typographic"]:
+        head("2. TYPOGRAPHY")
+        for h in report["typographic"]:
+            print(f"  {h['count']:>3}x  {h['name']}  -> {h['to']}", file=out)
+    if report["lexical"]:
+        head("3. SLOP LEXICON")
+        for h in report["lexical"]:
+            print(f"  {h['count']:>3}x  {h['find']}  -> {h['replace']}   [{h['family']}]", file=out)
+    if report["structures"]:
+        head("4. STRUCTURAL TELLS  (not auto-fixed - rewrite these yourself)")
+        for h in report["structures"]:
+            print(f"  {h['count']:>3}x  {h['name']}\n        {h['fix']}", file=out)
+    if not any(report.values()):
+        head("CLEAN")
+        print("  Nothing to strip.", file=out)
+    print("", file=out)
+
+
+def main():
+    ap = argparse.ArgumentParser(description="Strip the machine fingerprint out of a draft.")
+    ap.add_argument("input", nargs="?", default="-", help="file, or - for stdin")
+    ap.add_argument("-o", "--out", help="write cleaned text here instead of stdout")
+    ap.add_argument("--report", action="store_true", help="print what changed, to stderr")
+    ap.add_argument("--json", action="store_true", help="emit {text, report} as JSON")
+    ap.add_argument("--lexicon", default=LEX, help="path to slop.json")
+    args = ap.parse_args()
+
+    raw = sys.stdin.read() if args.input == "-" else open(args.input, encoding="utf-8").read()
+    lex = load_lexicon(args.lexicon)
+    clean, report = humanize(raw, lex)
+
+    if args.json:
+        print(json.dumps({"text": clean, "report": report}, indent=2, ensure_ascii=False))
+        return
+    if args.out:
+        with open(args.out, "w", encoding="utf-8") as fh:
+            fh.write(clean)
+        print(f"wrote {args.out}", file=sys.stderr)
+    else:
+        sys.stdout.write(clean)
+    if args.report:
+        render_report(report)
+
+
+if __name__ == "__main__":
+    main()
+````
+
+<!-- file: detect.py -->
+````python
+#!/usr/bin/env python3
+"""
+detect.py - a five-check panel that scores how machine-written a draft looks.
+
+What this is:  five local heuristics modelled on the signals public AI
+detectors actually measure - sentence-length variation, concreteness, stock
+vocabulary, typographic fingerprint, and voice. Every score is computed on
+your machine from the text alone. Nothing is uploaded.
+
+What this is NOT:  GPTZero, Originality, Copyleaks, Winston or Turnitin.
+It does not call their APIs and it cannot promise their verdict. It catches
+the things they all key on, which is why fixing them tends to move their
+numbers too - but the only honest claim is the one on this line.
+
+Each check returns a HUMAN score from 0 to 100. Higher is better.
+
+Usage
+  python3 detect.py draft.txt
+  pbpaste | python3 detect.py -
+  python3 detect.py draft.txt --json
+  python3 detect.py before.txt after.txt      # compare two drafts
+"""
+
+import argparse
+import json
+import os
+import re
+import statistics
+import sys
+import unicodedata
+
+import joiners
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+LEX = os.path.join(HERE, "slop.json")
+URL_RE = re.compile(r"https?://\S+|www\.\S+|\S+@\S+\.\S+")   # same pattern as humanize.py
+
+SENT_RE = re.compile(r"[^.!?\n]+[.!?]*")
+WORD_RE = re.compile(r"[A-Za-z']+")
+CONTRACTIONS = re.compile(r"\b\w+'(?:s|t|re|ve|ll|d|m)\b", re.IGNORECASE)
+PRONOUNS = re.compile(r"\b(i|me|my|mine|we|us|our|you|your)\b", re.IGNORECASE)
+NUMBERS = re.compile(r"\b\d[\d,.]*%?\b|\$\d")
+PROPER = re.compile(r"(?<![.!?]\s)(?<!^)\b[A-Z][a-z]{2,}\b", re.MULTILINE)
+
+
+def clamp(n):
+    return max(0.0, min(100.0, n))
+
+
+def scale(value, human, machine):
+    """Map value onto 0-100 where `human` -> 100 and `machine` -> 0."""
+    if human == machine:
+        return 50.0
+    return clamp((value - machine) / (human - machine) * 100)
+
+
+def sentences(text):
+    return [s.strip() for s in SENT_RE.findall(text) if len(s.split()) > 2]
+
+
+def words(text):
+    return WORD_RE.findall(text)
+
+
+def check_burstiness(text):
+    """Humans vary sentence length hard. Models write even."""
+    lens = [len(s.split()) for s in sentences(text)]
+    if len(lens) < 4:
+        return None, "too short to judge"
+    mean = statistics.mean(lens)
+    cv = statistics.pstdev(lens) / mean if mean else 0
+    score = scale(cv, human=0.70, machine=0.22)
+    return score, f"variation {cv:.2f} across {len(lens)} sentences (want 0.55+)"
+
+
+def check_specificity(text):
+    """Numbers, names and concrete nouns. Slop is abstract."""
+    w = words(text)
+    if len(w) < 25:
+        return None, "too short to judge"
+    per100 = 100 / len(w)
+    hits = len(NUMBERS.findall(text)) + len(set(PROPER.findall(text)))
+    density = hits * per100
+    score = scale(density, human=6.0, machine=0.5)
+    return score, f"{hits} concrete markers, {density:.1f} per 100 words (want 4+)"
+
+
+def check_slop(text, lex):
+    """Stock vocabulary density against the lexicon."""
+    text = URL_RE.sub(" ", text)          # humanize.py never rewrites inside a link, so do not count it
+    w = words(text)
+    if not w:
+        return 50.0, "empty"
+    hits, found = 0, []
+    for entry in lex["words"] + lex["phrases"]:
+        pattern = re.compile(r"\b" + re.escape(entry["find"]).replace(r"\ ", r"\s+") + r"\b",
+                             re.IGNORECASE)
+        n = len(pattern.findall(text))
+        if n:
+            hits += n
+            found.append(entry["find"])
+    density = hits * 100 / len(w)
+    score = scale(density, human=0.0, machine=4.0)
+    detail = f"{hits} stock terms, {density:.1f} per 100 words"
+    if found:
+        detail += " (" + ", ".join(sorted(found)[:4]) + (", ..." if len(found) > 4 else "") + ")"
+    return score, detail
+
+
+def check_fingerprint(text):
+    """Characters a phone keyboard does not produce."""
+    invisible = joiners.stray_cf(text)
+    em = text.count("—")
+    curly = sum(text.count(c) for c in "‘’“”")
+    ellip = text.count("…")
+    nbsp = sum(text.count(c) for c in "   ")
+    total = invisible * 4 + em * 2 + curly + ellip + nbsp
+    per1k = total * 1000 / max(len(text), 1)
+    score = scale(per1k, human=0.0, machine=12.0)
+    detail = (f"{invisible} invisible, {em} em dash, {curly} curly quote, "
+              f"{ellip} ellipsis, {nbsp} hard space")
+    return score, detail
+
+
+def check_voice(text, lex):
+    """Contractions, person, and the shapes models default to."""
+    w = words(text)
+    tells = 0
+    names = []
+    for s in lex["structures"]:
+        try:
+            n = len(re.compile(s["regex"], re.MULTILINE).findall(text))
+        except re.error:
+            continue
+        if n:
+            tells += n
+            names.append(s["id"])
+    if len(w) < 25:
+        # Too short for contractions and pronouns, but rocket emoji and engagement bait still count.
+        if not tells:
+            return None, "too short to judge"
+        return clamp(100 - tells * 22), f"too short for style; {tells} structural tell(s) [" + ", ".join(names[:4]) + "]"
+    per100 = 100 / len(w)
+    contractions = len(CONTRACTIONS.findall(text)) * per100
+    person = len(PRONOUNS.findall(text)) * per100
+    bullets = [len(b.split()) for b in re.findall(r"(?m)^\s*[-*•]\s+(.+)$", text)]
+    uniform = (len(bullets) >= 3 and statistics.pstdev(bullets) < 1.6)
+    score = (scale(contractions, human=3.0, machine=0.0) * 0.35
+             + scale(person, human=8.0, machine=1.0) * 0.35
+             + clamp(100 - tells * 22) * 0.30)
+    if uniform:
+        score -= 12
+        names.append("uniform-bullets")
+    detail = (f"{contractions:.1f} contractions, {person:.1f} personal pronouns "
+              f"per 100 words, {tells} structural tell(s)")
+    if names:
+        detail += " [" + ", ".join(names[:4]) + "]"
+    return clamp(score), detail
+
+
+CHECKS = ["BURSTINESS", "SPECIFICITY", "SLOP DENSITY", "FINGERPRINT", "VOICE"]
+# SPECIFICITY is shown as advice but never gates: otherwise invented numbers buy a PASS.
+GATED = ["BURSTINESS", "SLOP DENSITY", "FINGERPRINT", "VOICE"]
+PASS_OVERALL, PASS_FLOOR = 70, 55
+
+
+def gate_scores(results):
+    """The scores the verdict uses: gated checks only, None (too short) left out."""
+    return [results[c][0] for c in GATED if results[c][0] is not None]
+
+
+def run(text, lex):
+    results = {}
+    results["BURSTINESS"] = check_burstiness(text)
+    results["SPECIFICITY"] = check_specificity(text)
+    results["SLOP DENSITY"] = check_slop(text, lex)
+    results["FINGERPRINT"] = check_fingerprint(text)
+    results["VOICE"] = check_voice(text, lex)
+    scores = gate_scores(results)
+    # The weakest check drags the verdict: a detector only needs one signal.
+    overall = statistics.mean(scores) * 0.6 + min(scores) * 0.4
+    verdict = "PASS" if overall >= PASS_OVERALL and min(scores) >= PASS_FLOOR else (
+        "REVIEW" if overall >= 50 else "FLAGGED")
+    return results, overall, verdict
+
+
+def bar(score, width=24):
+    filled = round(score / 100 * width)
+    return "#" * filled + "." * (width - filled)
+
+
+def render(results, overall, verdict, label=None, out=sys.stdout):
+    title = "AI DETECTION PANEL" + (f"  -  {label}" if label else "")
+    print("\n" + title, file=out)
+    print("=" * max(len(title), 62), file=out)
+    for name in CHECKS:
+        score, detail = results[name]
+        shown = f"{bar(score)} {score:5.1f}" if score is not None else f"{'':<24}   N/A"
+        print(f"  {name:<13} {shown}", file=out)
+        print(f"  {'':<13} {detail}", file=out)
+    print("-" * 62, file=out)
+    print(f"  {'HUMAN SCORE':<13} {bar(overall)} {overall:5.1f}   {verdict}", file=out)
+    if verdict != "PASS":
+        weakest = min((c for c in GATED if results[c][0] is not None), key=lambda c: results[c][0])
+        print(f"\n  Weakest signal: {weakest}. Fix that first.", file=out)
+    if any(results[c][0] is None for c in GATED):
+        print("  Too short to judge style: N/A checks are left out of the verdict. VOICE still counts structural tells.", file=out)
+    spec = results["SPECIFICITY"][0]
+    if spec is not None and spec < PASS_FLOOR:
+        print("  SPECIFICITY is low: ask the user for a real number or example. Never invent one.", file=out)
+    print("", file=out)
+
+
+def main():
+    ap = argparse.ArgumentParser(description="Score how machine-written a draft looks.")
+    ap.add_argument("input", nargs="?", default="-", help="file, or - for stdin")
+    ap.add_argument("compare", nargs="?", help="second file, to show before/after")
+    ap.add_argument("--json", action="store_true")
+    ap.add_argument("--lexicon", default=LEX)
+    args = ap.parse_args()
+
+    lex = json.load(open(args.lexicon, encoding="utf-8"))
+    read = lambda p: sys.stdin.read() if p == "-" else open(p, encoding="utf-8").read()
+
+    targets = [(args.input, read(args.input))]
+    if args.compare:
+        targets.append((args.compare, read(args.compare)))
+
+    payload = []
+    for name, text in targets:
+        results, overall, verdict = run(text, lex)
+        payload.append({
+            "source": name,
+            "checks": {k: {"score": None if v[0] is None else round(v[0], 1), "detail": v[1]} for k, v in results.items()},
+            "human_score": round(overall, 1),
+            "verdict": verdict,
+        })
+
+    if args.json:
+        print(json.dumps(payload if args.compare else payload[0], indent=2))
+        return
+
+    for (name, text), p in zip(targets, payload):
+        results, overall, verdict = run(text, lex)
+        render(results, overall, verdict, label=os.path.basename(name) if args.compare else None)
+    if args.compare:
+        a, b = payload
+        delta = b["human_score"] - a["human_score"]
+        print(f"  {a['human_score']:.1f} {a['verdict']}  ->  "
+              f"{b['human_score']:.1f} {b['verdict']}   ({delta:+.1f})\n")
+
+    sys.exit(0 if payload[-1]["verdict"] == "PASS" else 1)
+
+
+if __name__ == "__main__":
+    main()
+````
+
+<!-- file: joiners.py -->
+````python
+"""Format characters that belong to real text, shared by humanize.py and detect.py:
+ZWJ inside an emoji sequence, the three RGI subdivision flags (England, Scotland, Wales),
+and ZWJ/ZWNJ inside a word in a script that needs them (Arabic script, Indic scripts).
+Also removes variation selectors that do not follow a character they can modify.
+Every constant is an escape, so copying this file through a text cleaner cannot blank it."""
+import re
+import unicodedata
+
+ZWNJ, ZWJ, VS16 = "\u200c", "\u200d", "\ufe0f"
+BLACK_FLAG, CANCEL_TAG = "\U0001F3F4", "\U000E007F"
+# Tag spellings of the only subdivision flags in Unicode's recommended (RGI) set.
+RGI_FLAG_TAGS = {"".join(chr(0xE0000 + ord(ch)) for ch in s) for s in ("gbeng", "gbsct", "gbwls")}
+# Scripts whose spelling uses ZWNJ/ZWJ: Arabic, Arabic Supplement/Extended-A, Arabic
+# presentation forms (Persian, Urdu, Kurdish...), Devanagari through Sinhala (Indic).
+JOINER_SCRIPTS = ((0x0600, 0x06FF), (0x0750, 0x077F), (0x08A0, 0x08FF),
+                  (0xFB50, 0xFDFF), (0xFE70, 0xFEFF), (0x0900, 0x0DFF))
+# Emoji blocks only. VS16, tags, private-use planes and the variation selectors supplement
+# are deliberately excluded, so a ZWJ needs a visible emoji on both sides to be kept.
+EMOJI_RANGES = ((0x1F000, 0x1FAFF), (0x2600, 0x27BF), (0x2B00, 0x2BFF))
+# A variation selector (VS1-16, or VS17-256) right after whitespace, the start of the text,
+# another selector, or an ASCII character other than a keycap base (0-9 # *) modifies nothing.
+STRAY_VS = re.compile(r"(?:(?<=^)|(?<=[\s\ufe00-\ufe0f\U000E0100-\U000E01EF])|"
+                      r"(?<=[\x21-\x22\x24-\x29\x2b-\x2f\x3a-\x7e]))[\ufe00-\ufe0f\U000E0100-\U000E01EF]")
+
+
+def _emoji(c):
+    return any(a <= ord(c) <= b for a, b in EMOJI_RANGES)
+
+
+def _joining_letter(c):
+    return (unicodedata.category(c)[0] in "LM"
+            and any(a <= ord(c) <= b for a, b in JOINER_SCRIPTS))
+
+
+def legit_positions(text):
+    keep = set()
+    for i, c in enumerate(text):
+        prev, nxt = text[i - 1] if i else "", text[i + 1] if i + 1 < len(text) else ""
+        # emoji, or emoji + VS16, before the ZWJ; a real emoji after it (never a bare VS16)
+        emoji_before = prev and (_emoji(prev) or (prev == VS16 and i >= 2 and _emoji(text[i - 2])))
+        if c == ZWJ and emoji_before and nxt and _emoji(nxt):
+            keep.add(i)                                       # woman + ZWJ + laptop
+        elif c in (ZWJ, ZWNJ) and prev and nxt and _joining_letter(prev) and _joining_letter(nxt):
+            keep.add(i)                                       # Persian mi + ZWNJ + khaham
+        elif c == BLACK_FLAG:
+            for tags in RGI_FLAG_TAGS:                        # flag + 5 tags + CANCEL TAG
+                if text.startswith(tags + CANCEL_TAG, i + 1):
+                    keep.update(range(i + 1, i + 7))
+    return keep
+
+
+def strip_stray_vs(text):
+    """Delete variation selectors that modify nothing. Repeated until stable, because
+    deleting one can leave the next one stray."""
+    while True:
+        new = STRAY_VS.sub("", text)
+        if new == text:
+            return text
+        text = new
+
+
+def clean_around(text, clean):
+    """Run clean(segment) -> (segment, hits) on the text between legitimate format
+    characters, so the cleaner never sees them. No stand-in characters are used,
+    so nothing already in the input can be turned into a format character."""
+    out, hits, start = [], {}, 0
+    for i in sorted(legit_positions(text)) + [len(text)]:
+        seg, h = clean(text[start:i])
+        out.append(seg)
+        for e in h:                                           # merge per-segment counts
+            hits.setdefault(e["name"], dict(e, count=0))["count"] += e["count"]
+        out.append(text[i:i + 1])
+        start = i + 1
+    return strip_stray_vs("".join(out)), list(hits.values())
+
+
+def stray_cf(text):
+    """Count the format characters that are not part of real text, plus stray selectors."""
+    keep = legit_positions(text)
+    rest = "".join(c for i, c in enumerate(text) if unicodedata.category(c) != "Cf" or i in keep)
+    return len(text) - len(strip_stray_vs(rest))
+````
+
+<!-- file: provenance.py -->
+````python
+#!/usr/bin/env python3
+"""Every number or magnitude claim in a draft must appear in the user's proof ledger, or be a {{placeholder}}.
+Usage: python3 provenance.py draft.txt proof.md [context.txt ...]   (exit 1 if any claim is unsourced)
+Ledger format: one fact per line, optionally starting with an ISO date (2026-03-14).
+context.txt: text that sources THIS draft only - the post being commented on, the message being
+answered, a transcript being repurposed, or numbers the user confirmed in chat. Never the ledger."""
+import re, sys
+
+ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split()
+TENS = dict(zip("twenty thirty forty fifty sixty seventy eighty ninety".split(), range(20, 100, 10)))
+WORDVAL = {w: i for i, w in enumerate(ONES)} | TENS | {"dozen": 12}
+MULT = {"hundred": 100, "thousand": 1000, "million": 10**6, "billion": 10**9}
+SUFFIX = {"k": 1000, "K": 1000, "M": 10**6, "m": 10**6, "bn": 10**9,
+          "thousand": 1000, "million": 10**6, "billion": 10**9}
+# A number, with its scale if it has one: 12,000 / $12k / 1.5M / 3 million / £2m.
+# Digits glued to a letter on the left (B2B, Q3, H1) are names, not quantities.
+# Lower-case "m" counts as million only after a currency sign ("5m" alone may be minutes or metres).
+DIGITS = re.compile(r"(?<![A-Za-z\d.,])(?P<cur>[$£€])?(?P<num>\d[\d,]*(?:\.\d+)?)"
+                    r"(?:(?P<suf>[kKMm]|bn)\b|\s?(?P<word>thousand|million|billion)\b)?")
+WORDNUM = re.compile(r"\b(?:a\s+(?=(?:%s)\b))?(?:%s)(?:[\s-]+(?:%s|and))*\b" % (
+    "|".join(MULT), "|".join(list(WORDVAL) + list(MULT)), "|".join(list(WORDVAL) + list(MULT))), re.I)
+# Vague magnitudes a model likes to invent; they pass only if the same word is in the ledger.
+VAGUE = re.compile(r"\b(hundreds|thousands|millions|billions|dozens|(?:doubl|tripl|quadrupl)(?:ed|es|ing)|"
+                   r"halved|halving|twice|(?:two|three|four|five|ten)fold)\b", re.I)
+# Phrases that contain a number or magnitude word but make no claim. Add more as they come up.
+IDIOMS = re.compile(r"\b\d{1,2}(?::\d{2})?\s?[ap]\.?m\b\.?|\b\d{1,2}:\d{2}\b|\b24/7\b|\b365\b(?=\s+days a year)|\b(?:2|two)\s+cents\b|\bdoubl\w*\s+down\b", re.I)
+# "1. Draft" / "2. Ship" are not claims. Only a run numbered 1, 2, ... with text on the same
+# line counts as a list, so a lone "47." or "2019. The year I quit." opening a post is still checked.
+# Links, hashtags, @mentions and calendar dates hold digits but make no claim.
+LINKS = re.compile(r"https?://\S+|www\.\S+|\S+@\S+\.\S+|(?<!\w)[#@](?=\w*[A-Za-z])\w+")
+_MONTH = r"(?:Jan(?:uary)?|Feb(?:ruary)?|Mar(?:ch)?|Apr(?:il)?|May|June?|July?|Aug(?:ust)?|Sept?(?:ember)?|Oct(?:ober)?|Nov(?:ember)?|Dec(?:ember)?)"
+_DAY = r"(?:Mon|Tues|Wednes|Thurs|Fri|Satur|Sun)day"
+DATES = re.compile(r"\b(?:%s,?\s+(?:the\s+)?|%s\.?\s+(?:the\s+)?)\d{1,2}(?:st|nd|rd|th)?\b|"
+                   r"\b\d{1,2}(?:st|nd|rd|th)?\s+(?:of\s+)?%s\b" % (_DAY, _MONTH, _MONTH))   # case-sensitive: "may 5" is not May 5
+LIST_MARKER = re.compile(r"^[ \t]*(\d{1,2})[.)][ \t]+(?=\S)", re.M)
+LEADING_DATE = re.compile(r"^\s*\d{4}-\d{2}-\d{2}\s*", re.M)
+
+def words_to_int(tokens):
+    total = cur = 0
+    for w in tokens:
+        if w in WORDVAL: cur += WORDVAL[w]
+        elif w in MULT:
+            cur = max(cur, 1) * MULT[w]
+            if MULT[w] >= 1000: total, cur = total + cur, 0
+    return total + cur
+
+def spans(phrase):
+    """'five and six' -> two numbers; 'two hundred and fifty' -> one."""
+    toks = [t for t in re.split(r"[\s-]+", phrase.lower()) if t and t != "a"]
+    groups, cur = [], []
+    for t in toks:
+        if t == "and" and not (cur and cur[-1] in MULT):
+            groups.append(cur); cur = []
+        elif t != "and":
+            cur.append(t)
+    return [g for g in groups + [cur] if g]
+
+def key(v):
+    v = round(float(v), 6)                                   # 2.01 * 1000 == 2010, not 2009.999...
+    return str(int(v)) if v.is_integer() else repr(v)
+
+def strip_list_markers(text):
+    nums, n = {int(m[1]) for m in LIST_MARKER.finditer(text)}, 1
+    while n in nums: n += 1
+    if n < 3: return text                                     # no "1." and "2." -> not a list
+    return LIST_MARKER.sub(lambda m: "" if int(m[1]) < n else m.group(), text)
+
+def numbers(text):
+    """Values: '$12,000' == '12k' == 'twelve thousand', '40%' == '40 percent' == 'forty percent'."""
+    found = {}
+    text = IDIOMS.sub(" ", DATES.sub(" ", LINKS.sub(" ", text)))
+    def digit(m):
+        n = float(m["num"].rstrip(".").replace(",", ""))
+        suf = m["suf"] or m["word"] or ""
+        scale = 1 if suf == "m" and not m["cur"] else SUFFIX.get(suf, 1)
+        found[key(n * scale)] = m.group().strip()
+        return " "                                           # so "million" is not read twice
+    text = DIGITS.sub(digit, text)
+    for m in WORDNUM.finditer(text):
+        for g in spans(m.group()):
+            if g == ["one"]: continue                         # "one of the" is not a claim
+            found[key(words_to_int(g))] = m.group()
+    for m in VAGUE.finditer(text):
+        w = m.group().lower()
+        found["~" + (w if w.endswith("fold") or w == "twice" else re.sub(r"(ed|es|ing)$", "", w))] = m.group()
+    return found
+
+if __name__ == "__main__":
+    draft, ledger, *context = (open(p, encoding="utf-8").read() for p in sys.argv[1:])
+    known = numbers(LEADING_DATE.sub("", ledger))
+    for c in context: known |= numbers(c)
+    draft = strip_list_markers(re.sub(r"\{\{.*?\}\}", "", draft))   # placeholders are honest gaps
+    unsourced = {v: raw for v, raw in numbers(draft).items() if v not in known}
+    for v, raw in sorted(unsourced.items()):
+        print(f"UNSOURCED  {raw}")
+    print("OK" if not unsourced else f"{len(unsourced)} claim(s) not in the ledger")
+    sys.exit(1 if unsourced else 0)
+````
