@@ -109,64 +109,113 @@ X", "humanize this draft") instead of typing `/li-post`.
 
 ### Any chat app (one file)
 
-Works in a normal ChatGPT, Gemini or Claude chat, free accounts included:
+Works in a normal ChatGPT, Gemini or Claude chat, free accounts included.
 
-1. Download [`skills.md`](chatgpt/skills.md) (open it, click the download button).
+1. **[Download skills.md](https://github.com/niksyarul/linkedin-skills/releases/latest/download/skills.md)**
 2. Start a new chat, attach `skills.md`, and type what you want: "write a
    LinkedIn post about the client we lost", "humanize this", "score my profile".
-3. Attach your `voice.md` and `proof.md` too if you have them.
 
-Do this once per chat. For something you set up once and keep, use a Project,
-a custom GPT or a Gem below.
+Do this once per chat. To set it up once and keep it, use a ChatGPT Project
+or a Gemini Gem below.
 
 ### ChatGPT Project or custom GPT
 
-The [`chatgpt/`](chatgpt) folder is a ready-made pack. Download these three
-files (open each one and click the download button):
-
-- [`instructions.md`](chatgpt/instructions.md), which tells ChatGPT how to use the rest
-- [`skills.md`](chatgpt/skills.md), all eleven skills in one file
-- [`tools.zip`](chatgpt/tools.zip), the humanizer scripts. ChatGPT runs them itself.
-
-Then, in ChatGPT:
-
-1. Click **Projects**, then **New project**, and name it "LinkedIn".
-2. Open the project settings, find **Instructions**, and paste in everything
-   from `instructions.md`.
-3. Add `skills.md` and `tools.zip` to the project files. Add your filled-in
-   `voice.md` and `proof.md` too (see below).
-4. Start a chat inside the project and ask in plain words: "write a LinkedIn
+1. Download **[skills.md](https://github.com/niksyarul/linkedin-skills/releases/latest/download/skills.md)** and **[tools.zip](https://github.com/niksyarul/linkedin-skills/releases/latest/download/tools.zip)**.
+   Don't unzip `tools.zip`. ChatGPT opens it and runs the humanizer itself.
+2. In ChatGPT, click **Projects**, then **New project**, and name it "LinkedIn".
+3. Open the project settings and paste [the instructions](#the-instructions)
+   into **Instructions**.
+4. Add `skills.md` and `tools.zip` to the project files.
+5. Start a chat inside the project and ask in plain words: "write a LinkedIn
    post about the client we lost", "humanize this", "score my profile", "plan
    my week".
 
-You can also build a custom GPT with the same instructions and files under
-**Knowledge**, with **Code Interpreter** switched on. A custom GPT can be
-shared as a link, so whoever builds one can hand it to people who would rather
-not set anything up.
+A custom GPT works the same way: paste the instructions, upload both files
+under **Knowledge**, and switch on **Code Interpreter**. A GPT can be shared
+as a link, so other people only have to click it.
 
 What you lose in ChatGPT: nothing carries over between chats, so the post log
-and the DM follow-up ledger cannot be kept for you. When a skill would log
-something, ChatGPT gives you the line to save yourself. If ChatGPT cannot run
+and the DM follow-up ledger can't be kept for you. When a skill would log
+something, ChatGPT gives you the line to save yourself. If ChatGPT can't run
 the scripts, it checks the draft by hand and says the scores are estimates.
 
 ### Gemini Gem
 
-Web or phone app, nothing to install.
-
-The same pack works as a Gem:
-
-1. Go to [gemini.google.com](https://gemini.google.com), open **Gems**, then
+1. **[Download skills.md](https://github.com/niksyarul/linkedin-skills/releases/latest/download/skills.md)**
+2. Go to [gemini.google.com](https://gemini.google.com), open **Gems**, then
    **New Gem**, and name it "LinkedIn".
-2. Paste everything from `instructions.md` into **Instructions**.
-3. Under **Knowledge**, add `skills.md`, plus your `voice.md` and `proof.md`.
-   Skip `tools.zip`. Gems cannot run the scripts, so Gemini checks drafts by
-   hand and says the scores are estimates.
-4. Save, then chat with the Gem in plain words, as above.
+3. Paste [the instructions](#the-instructions) into **Instructions**.
+4. Under **Knowledge**, add `skills.md`.
+5. Save, then chat with the Gem in plain words.
 
-A saved Gem can be shared as a link, the same as a custom GPT.
+Gems can't run the scripts, so Gemini checks drafts by hand and says the
+scores are estimates. A saved Gem can be shared as a link.
 
-Maintainers: after editing anything under `skills/`, run
-`python3 chatgpt/build.py` to rebuild `skills.md` and `tools.zip`.
+### The instructions
+
+Click the copy button on the box, then paste it into your Project, GPT or Gem.
+
+<!-- instructions:start -->
+```text
+You run a LinkedIn account for the user with eleven skills. The full
+instructions for every skill are in `skills.md`, one section per skill, each
+starting with `# li-<name>`. Before answering, read the section that fits the
+request and follow it exactly.
+
+Pick the skill from what the user asks. They may type the command or just
+describe the job:
+
+- li-post: write a post, a hook, "post about X"
+- li-comment: comment on someone else's post
+- li-reply: answer the comments under the user's own post
+- li-profile: score or rewrite a profile, headline, about section
+- li-plan: plan the week, content calendar, "what should I post"
+- li-human: humanize a draft, "does this sound like AI", remove em dashes
+- li-carousel: carousel or document post
+- li-repurpose: turn a video, newsletter or transcript into posts
+- li-dm: connection note, DM, follow-up
+- li-inbox: triage DMs and connection requests
+- li-audit: read past posts or analytics, "what's working"
+
+If the request is unclear, list these in one line each and ask which one.
+
+The skills were written for a desktop agent. In this chat app, adapt them like this:
+
+1. Files. Any path under `~/.claude/linkedin/` means a file the user uploaded
+   to this chat or project: `voice.md` (their voice), `proof.md` (numbers they
+   stand behind), `plan.md` (this week's plan). If one is missing, carry on
+   without it and say once that uploading it gives better drafts.
+2. Scripts. `tools.zip` holds humanize.py, detect.py, provenance.py and the
+   JSON they read. When a skill says to run one, unzip it with Python, write
+   the draft to a file, and run the script from the `tools` folder. Show the
+   user the score output. If you cannot run code, do the same checks by hand
+   and say the scores are estimates.
+3. Logs. events.py and outreach.py are not available, because nothing here is
+   kept between chats. When a skill says to log a post or a follow-up, give the
+   user the row to keep instead (date, URL, what was sent, when to follow up).
+   If they paste such rows back later, use them.
+4. Proof. Never put a number, client or result in a draft unless it is in
+   `proof.md`, in the text the user pasted, or confirmed by the user in this
+   chat. Otherwise write `{{your number}}` and flag it.
+5. Posting. You never post anything. Every skill ends with a copy-ready block
+   that the user pastes into LinkedIn.
+
+Every draft goes through li-human before the user sees it.
+```
+<!-- instructions:end -->
+
+### Make it sound like you
+
+Optional, works in every chat app. Download
+**[voice.md](https://github.com/niksyarul/linkedin-skills/releases/latest/download/voice.md)** and **[proof.md](https://github.com/niksyarul/linkedin-skills/releases/latest/download/proof.md)**, fill them in, and
+attach them to the chat or add them to your Project or Gem. Don't add them to
+a GPT or Gem you share: anyone using it can get the AI to read them out.
+
+Maintainers: after editing anything under `skills/` or
+`chatgpt/instructions.md`, run `python3 chatgpt/build.py`. On each release,
+attach the files with
+`gh release upload <tag> chatgpt/skills.md chatgpt/tools.zip templates/voice.md templates/proof.md`
+so the download links above keep working.
 
 ### Codex and ChatGPT desktop
 
