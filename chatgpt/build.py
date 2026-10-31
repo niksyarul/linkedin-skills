@@ -33,4 +33,12 @@ with zipfile.ZipFile(os.path.join(OUT, "tools.zip"), "w", zipfile.ZIP_DEFLATED) 
         info = zipfile.ZipInfo("tools/" + os.path.basename(rel), (2026, 1, 1, 0, 0, 0))
         info.compress_type = zipfile.ZIP_DEFLATED
         z.writestr(info, open(os.path.join(SKILLS, rel), "rb").read())
-print("wrote chatgpt/skills.md and chatgpt/tools.zip")
+# Copy instructions.md into the README box people paste from.
+readme_path = os.path.join(ROOT, "README.md")
+readme = open(readme_path, encoding="utf-8").read()
+head, rest = readme.split("<!-- instructions:start -->\n", 1)
+_, tail = rest.split("<!-- instructions:end -->", 1)
+with open(readme_path, "w", encoding="utf-8") as fh:
+    fh.write(head + "<!-- instructions:start -->\n```text\n" + parts[0].rstrip()
+             + "\n```\n<!-- instructions:end -->" + tail)
+print("wrote chatgpt/skills.md, chatgpt/tools.zip and the README instructions")
