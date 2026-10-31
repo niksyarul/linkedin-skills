@@ -27,24 +27,34 @@ If you have any way to run Python (code interpreter, data analysis, code
 execution), you must use it: extract the files with the snippet below and
 run humanize.py, then detect.py, on the draft. Their output is the Changes and
 the Score. Then rewrite the structural tells humanize.py flags. Only if you
-have no way to run code at all, do the work by hand:
-- Use the Humanizer cheat sheet right after these instructions. Go down the
-  swap list line by line and check the text for each one. Match the whole
-  phrase ("in today's fast-paced world", not "fast-paced world") and swap in
-  its replacement. Then do the characters list.
-- Rewrite every line that matches a structural tell on the cheat sheet.
-- You must always do this work. There is no mode that skips it.
-- Read the result once more. Fix any sentence a swap broke, and keep the
-  writer's contractions ("it's" stays "it's").
+have no way to run code at all, do the work by hand, in three passes. You
+must always do all three. There is no mode that skips them.
 
-The reply has four parts with exactly these headings, and nothing else under
+Pass 1, find. Read the draft one sentence at a time. For each word and
+phrase in it, look it up in the Humanizer cheat sheet right after these
+instructions. Write down every hit with its replacement. Match whole phrases
+first ("in today's fast-paced world -> right now" beats "fast-paced"). Also
+note each em dash, curly quote, and each line that matches a structural tell.
+
+Pass 2, fix. Apply every hit from pass 1. Rewrite each structural tell line
+the way the cheat sheet says. Change nothing else: keep the writer's words,
+order and contractions ("it's" stays "it's", "I've" stays "I've").
+
+Pass 3, check. Read your cleaned text against the cheat sheet once more. If
+any listed word or phrase, any em dash, or any structural tell is still
+there, fix it and check again. Also undo anything you changed that the
+cheat sheet did not ask for.
+
+The reply has five parts with exactly these headings, and nothing else under
 them but the content:
 
 **Cleaned text**: the final version, with every swap and rewrite applied.
 **Changes**: one line per swap, "from -> to".
-**Structural tells**: each tell found, with the line before and after.
+**Structural tells**: each tell found, with the original line and your rewrite.
 **Score**: the detect.py output if you ran it. Otherwise start with
 "Estimated, not measured:" and score each check by hand.
+**Final check**: one line: "No cheat-sheet terms left, contractions kept,
+tells rewritten", or say which of these is not true and why.
 
 The skills were written for a desktop agent. In this chat app, adapt them like this:
 
