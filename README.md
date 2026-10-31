@@ -110,6 +110,9 @@ X", "humanize this draft") instead of typing `/li-post`.
 ### Any chat app (one file)
 
 Works in a normal ChatGPT, Gemini or Claude chat, free accounts included.
+The file carries all eleven skills, the 21 hook formulas, the profile rubric,
+the slop lexicon and the humanizer scripts. Where the chat can run Python,
+it runs the scripts. Where it can't, it applies the same rules by hand.
 
 1. **[Download skills.md](https://github.com/niksyarul/linkedin-skills/releases/latest/download/skills.md)**
 2. Start a new chat, attach `skills.md`, and type what you want: "write a
@@ -120,17 +123,16 @@ or a Gemini Gem below.
 
 ### ChatGPT Project or custom GPT
 
-1. Download **[skills.md](https://github.com/niksyarul/linkedin-skills/releases/latest/download/skills.md)** and **[tools.zip](https://github.com/niksyarul/linkedin-skills/releases/latest/download/tools.zip)**.
-   Don't unzip `tools.zip`. ChatGPT opens it and runs the humanizer itself.
+1. **[Download skills.md](https://github.com/niksyarul/linkedin-skills/releases/latest/download/skills.md)**
 2. In ChatGPT, click **Projects**, then **New project**, and name it "LinkedIn".
 3. Open the project settings and paste [the instructions](#the-instructions)
    into **Instructions**.
-4. Add `skills.md` and `tools.zip` to the project files.
+4. Add `skills.md` to the project files.
 5. Start a chat inside the project and ask in plain words: "write a LinkedIn
    post about the client we lost", "humanize this", "score my profile", "plan
    my week".
 
-A custom GPT works the same way: paste the instructions, upload both files
+A custom GPT works the same way: paste the instructions, upload `skills.md`
 under **Knowledge**, and switch on **Code Interpreter**. A GPT can be shared
 as a link, so other people only have to click it.
 
@@ -181,15 +183,24 @@ If the request is unclear, list these in one line each and ask which one.
 
 The skills were written for a desktop agent. In this chat app, adapt them like this:
 
-1. Files. Any path under `~/.claude/linkedin/` means a file the user uploaded
-   to this chat or project: `voice.md` (their voice), `proof.md` (numbers they
-   stand behind), `plan.md` (this week's plan). If one is missing, carry on
-   without it and say once that uploading it gives better drafts.
-2. Scripts. `tools.zip` holds humanize.py, detect.py, provenance.py and the
-   JSON they read. When a skill says to run one, unzip it with Python, write
-   the draft to a file, and run the script from the `tools` folder. Show the
-   user the score output. If you cannot run code, do the same checks by hand
-   and say the scores are estimates.
+1. The user's files. `voice.md` (their voice), `proof.md` (numbers they stand
+   behind) and `plan.md` (this week's plan) are files the user attaches to the
+   chat. If one is missing, carry on without it and say once that attaching it
+   gives better drafts.
+2. Data and scripts. The `# Files` section at the end of `skills.md` holds
+   hooks.json (the 21 hook formulas), rubric.json (the profile score),
+   slop.json (the lexicon) and the humanizer scripts, each after a
+   `<!-- file: name -->` line. When a skill reads one of the JSON files, use
+   that copy. When a skill says to run a script and you can run Python,
+   extract the files first, then run the script as the skill says:
+
+       import re, pathlib
+       src = next(p for d in ("/mnt/data", ".") for p in pathlib.Path(d).glob("skills*.md")).read_text(encoding="utf-8")
+       for name, body in re.findall(r"<!-- file: (\S+) -->\n````\w*\n(.*?)\n````", src, re.S):
+           pathlib.Path(name).write_text(body + "\n", encoding="utf-8")
+
+   Show the user the score output. If you cannot run code, apply slop.json and
+   the scoring rules in detect.py by hand, and say the scores are estimates.
 3. Logs. events.py and outreach.py are not available, because nothing here is
    kept between chats. When a skill says to log a post or a follow-up, give the
    user the row to keep instead (date, URL, what was sent, when to follow up).
@@ -214,7 +225,7 @@ a GPT or Gem you share: anyone using it can get the AI to read them out.
 Maintainers: after editing anything under `skills/` or
 `chatgpt/instructions.md`, run `python3 chatgpt/build.py`. On each release,
 attach the files with
-`gh release upload <tag> chatgpt/skills.md chatgpt/tools.zip templates/voice.md templates/proof.md`
+`gh release upload <tag> chatgpt/skills.md templates/voice.md templates/proof.md`
 so the download links above keep working.
 
 ### Codex and ChatGPT desktop

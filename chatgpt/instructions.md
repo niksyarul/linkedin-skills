@@ -22,15 +22,24 @@ If the request is unclear, list these in one line each and ask which one.
 
 The skills were written for a desktop agent. In this chat app, adapt them like this:
 
-1. Files. Any path under `~/.claude/linkedin/` means a file the user uploaded
-   to this chat or project: `voice.md` (their voice), `proof.md` (numbers they
-   stand behind), `plan.md` (this week's plan). If one is missing, carry on
-   without it and say once that uploading it gives better drafts.
-2. Scripts. `tools.zip` holds humanize.py, detect.py, provenance.py and the
-   JSON they read. When a skill says to run one, unzip it with Python, write
-   the draft to a file, and run the script from the `tools` folder. Show the
-   user the score output. If you cannot run code, do the same checks by hand
-   and say the scores are estimates.
+1. The user's files. `voice.md` (their voice), `proof.md` (numbers they stand
+   behind) and `plan.md` (this week's plan) are files the user attaches to the
+   chat. If one is missing, carry on without it and say once that attaching it
+   gives better drafts.
+2. Data and scripts. The `# Files` section at the end of `skills.md` holds
+   hooks.json (the 21 hook formulas), rubric.json (the profile score),
+   slop.json (the lexicon) and the humanizer scripts, each after a
+   `<!-- file: name -->` line. When a skill reads one of the JSON files, use
+   that copy. When a skill says to run a script and you can run Python,
+   extract the files first, then run the script as the skill says:
+
+       import re, pathlib
+       src = next(p for d in ("/mnt/data", ".") for p in pathlib.Path(d).glob("skills*.md")).read_text(encoding="utf-8")
+       for name, body in re.findall(r"<!-- file: (\S+) -->\n````\w*\n(.*?)\n````", src, re.S):
+           pathlib.Path(name).write_text(body + "\n", encoding="utf-8")
+
+   Show the user the score output. If you cannot run code, apply slop.json and
+   the scoring rules in detect.py by hand, and say the scores are estimates.
 3. Logs. events.py and outreach.py are not available, because nothing here is
    kept between chats. When a skill says to log a post or a follow-up, give the
    user the row to keep instead (date, URL, what was sent, when to follow up).
