@@ -1,7 +1,7 @@
 # LinkedIn skills
 
-Eleven Claude skills that run a LinkedIn account. Free, MIT, no signup, no API
-key, nothing to connect.
+Eleven skills that run a LinkedIn account, for Claude, Gemini CLI and
+ChatGPT/Codex. Free, MIT, no signup, no API key, nothing to connect.
 
 One of them writes your posts off 21 hook formulas. One comments on other
 people's posts. One handles the replies under yours. One scores your profile
@@ -80,6 +80,100 @@ Project-local instead of global: copy the same folders into your repo's
 `.claude/skills/`. No Claude Code at all? Paste any single `SKILL.md` at the
 top of a chat and it runs as a mode - you lose the two Python tools, which is
 most of the point of `/li-human`, but the rest works.
+
+### Gemini CLI
+
+Gemini CLI reads the same `SKILL.md` format. Copy the folders into its user
+skills directory, or into `.gemini/skills/` in a project:
+
+```bash
+git clone https://github.com/niksyarul/linkedin-skills.git
+mkdir -p ~/.gemini/skills
+cp -r linkedin-skills/skills/li-* ~/.gemini/skills/
+```
+
+Run `/skills list` inside `gemini` to check they loaded. Gemini picks a skill
+from its description, so ask in plain words ("write a LinkedIn post about
+X", "humanize this draft") instead of typing `/li-post`.
+
+### Any chat app: one file
+
+Works in a normal ChatGPT, Gemini or Claude chat, free accounts included:
+
+1. Download [`skills.md`](chatgpt/skills.md) (open it, click the download button).
+2. Start a new chat, attach `skills.md`, and type what you want: "write a
+   LinkedIn post about the client we lost", "humanize this", "score my profile".
+3. Attach your `voice.md` and `proof.md` too if you have them.
+
+Do this once per chat. For something you set up once and keep, use a Project,
+a custom GPT or a Gem below.
+
+### ChatGPT Project or custom GPT
+
+The [`chatgpt/`](chatgpt) folder is a ready-made pack. Download these three
+files (open each one and click the download button):
+
+- [`instructions.md`](chatgpt/instructions.md), which tells ChatGPT how to use the rest
+- [`skills.md`](chatgpt/skills.md), all eleven skills in one file
+- [`tools.zip`](chatgpt/tools.zip), the humanizer scripts. ChatGPT runs them itself.
+
+Then, in ChatGPT:
+
+1. Click **Projects**, then **New project**, and name it "LinkedIn".
+2. Open the project settings, find **Instructions**, and paste in everything
+   from `instructions.md`.
+3. Add `skills.md` and `tools.zip` to the project files. Add your filled-in
+   `voice.md` and `proof.md` too (see below).
+4. Start a chat inside the project and ask in plain words: "write a LinkedIn
+   post about the client we lost", "humanize this", "score my profile", "plan
+   my week".
+
+You can also build a custom GPT with the same instructions and files under
+**Knowledge**, with **Code Interpreter** switched on. A custom GPT can be
+shared as a link, so whoever builds one can hand it to people who would rather
+not set anything up.
+
+What you lose in ChatGPT: nothing carries over between chats, so the post log
+and the DM follow-up ledger cannot be kept for you. When a skill would log
+something, ChatGPT gives you the line to save yourself. If ChatGPT cannot run
+the scripts, it checks the draft by hand and says the scores are estimates.
+
+### Gemini (web or phone app, nothing to install)
+
+The same pack works as a Gem:
+
+1. Go to [gemini.google.com](https://gemini.google.com), open **Gems**, then
+   **New Gem**, and name it "LinkedIn".
+2. Paste everything from `instructions.md` into **Instructions**.
+3. Under **Knowledge**, add `skills.md`, plus your `voice.md` and `proof.md`.
+   Skip `tools.zip`. Gems cannot run the scripts, so Gemini checks drafts by
+   hand and says the scores are estimates.
+4. Save, then chat with the Gem in plain words, as above.
+
+A saved Gem can be shared as a link, the same as a custom GPT.
+
+Maintainers: after editing anything under `skills/`, run
+`python3 chatgpt/build.py` to rebuild `skills.md` and `tools.zip`.
+
+### Codex and the ChatGPT desktop app's skills
+
+Codex CLI, the Codex IDE extension and the ChatGPT desktop app read the same
+format from `~/.agents/skills` (or `.agents/skills/` in a repo):
+
+```bash
+git clone https://github.com/niksyarul/linkedin-skills.git
+mkdir -p ~/.agents/skills
+cp -r linkedin-skills/skills/li-* ~/.agents/skills/
+```
+
+Restart Codex if a skill does not show up, then ask in plain words, the same
+as with Gemini.
+
+### Where your files live
+
+On a computer, every tool uses the same data folder, `~/.claude/linkedin/`, so switching
+between Claude, Gemini and Codex keeps one voice, one proof ledger and one
+log. The name is historical; nothing in it needs Claude.
 
 Then spend ten minutes on `templates/voice.md`. Copy it to
 `~/.claude/linkedin/voice.md` and fill it in, or paste three of your own posts
