@@ -112,7 +112,10 @@ X", "humanize this draft") instead of typing `/li-post`.
 Works in a normal ChatGPT, Gemini or Claude chat, free accounts included.
 The file carries all eleven skills, the 21 hook formulas, the profile rubric,
 the slop lexicon and the humanizer scripts. Where the chat can run Python,
-it runs the scripts. Where it can't, it applies the same rules by hand.
+it runs the scripts. Where it can't, it applies the same rules by hand,
+and that is rough: in our Gemini tests it fixed most swaps and missed some,
+and its scores are estimates. For exact cleaning and real scores, use
+ChatGPT and check it shows code running.
 
 1. **[Download skills.md](https://github.com/niksyarul/linkedin-skills/releases/latest/download/skills.md)**
 2. Start a new chat, attach `skills.md`, and type what you want: "write a
