@@ -1,15 +1,17 @@
 # LinkedIn skills
 
-**Install for the AI you use:**
+**Install:** [Claude Code](#claude-code)
+
+**Not confirmed yet:**
 [ChatGPT](#chatgpt-project-or-custom-gpt) ·
 [Gemini](#gemini-gem) ·
-[Claude Code](#claude-code) ·
 [Gemini CLI](#gemini-cli) ·
 [Codex](#codex-and-chatgpt-desktop) ·
 [any chat, one file](#any-chat-app-one-file)
 
-Eleven skills that run a LinkedIn account, in ChatGPT, Gemini, Claude and
-Codex. Free, MIT, no signup, no API key, nothing to connect.
+Eleven skills that run a LinkedIn account in Claude Code. Free, MIT, no
+signup, no API key, nothing to connect. ChatGPT and Gemini support is on the
+way.
 
 One of them writes your posts off 21 hook formulas. One comments on other
 people's posts. One handles the replies under yours. One scores your profile
@@ -87,10 +89,13 @@ Or as a plugin:
 ```
 
 Project-local instead of global: copy the same folders into your repo's
-`.claude/skills/`. No Claude Code at all? Paste any single `SKILL.md` at the
-top of a chat and it runs as a mode - you lose the two Python tools, which is
-most of the point of `/li-human`, but the rest works. Or use the
-[one-file version](#any-chat-app-one-file), which has all eleven.
+`.claude/skills/`.
+
+### Not confirmed yet
+
+So far I've only tested the skills in Claude Code. Everything below is for
+other apps, and it's still being worked on, so it may not work yet. Tried one?
+Open an issue and tell me what happened, even if it broke.
 
 ### Gemini CLI
 
