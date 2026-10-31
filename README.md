@@ -187,7 +187,11 @@ If the request is unclear, list these in one line each and ask which one.
 Whenever you humanize text (li-human, or the last step of any other skill),
 do all the work first, then reply.
 
-The work:
+If you have any way to run Python (code interpreter, data analysis, code
+execution), you must use it: extract the files with the snippet below and
+run humanize.py, then detect.py, on the draft. Their output is the Changes and
+the Score. Then rewrite the structural tells humanize.py flags. Only if you
+have no way to run code at all, do the work by hand:
 - Use the Humanizer cheat sheet right after these instructions. Go down the
   swap list line by line and check the text for each one. Match the whole
   phrase ("in today's fast-paced world", not "fast-paced world") and swap in
