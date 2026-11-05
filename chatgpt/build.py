@@ -7,6 +7,7 @@ files and humanizer scripts, so one file works dropped into any chat.
 Run it after editing anything under skills/ or chatgpt/instructions.md, then
 commit skills.md and README.md.
 """
+import json
 import os
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -22,6 +23,22 @@ read = lambda p: open(p, encoding="utf-8").read()
 
 # instructions.md goes first, so skills.md alone works dropped into any chat.
 parts = [read(os.path.join(OUT, "instructions.md"))]
+
+# A chat that cannot run code skims a JSON file at the end. Put the lexicon up
+# front as plain lines, longest phrase first so "in today's fast-paced world"
+# wins over "fast-paced".
+lex = json.loads(read(os.path.join(SKILLS, "li-human/slop.json")))
+swaps = sorted(lex["phrases"] + lex["words"], key=lambda e: -len(e["find"]))
+sheet = ["# Humanizer cheat sheet\n\nThe same rules as slop.json. Check the text "
+         "against every line.\n\n## Swap these (whole phrase, any capitalisation)\n"]
+sheet += [f"- {e['find']} -> {e['replace'] or '(delete)'}" for e in swaps]
+sheet += ["\n## Characters\n"]
+sheet += [f"- {e['name']} ({e['from']}) -> {e['to']!r}" for e in lex["typographic"]]
+sheet += ["- Any zero-width or invisible character -> (delete)",
+          "\n## Structural tells: rewrite by hand\n"]
+sheet += [f"- {e['name']}: {e['fix']}" for e in lex["structures"]]
+parts.append("\n".join(sheet))
+
 for name in sorted(os.listdir(SKILLS)):
     path = os.path.join(SKILLS, name, "SKILL.md")
     if os.path.exists(path):
