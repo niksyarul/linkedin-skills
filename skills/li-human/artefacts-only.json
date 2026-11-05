@@ -213,6 +213,12 @@
       "regex": "(?i)\\b(?:agree\\?|thoughts\\?|who else\\b|am i wrong\\?)\\s*$",
       "name": "Reflex engagement bait",
       "fix": "Ask a question only you could ask, about the specific thing above it."
+    },
+    {
+      "id": "quote-opener",
+      "regex": "^\\s*[\"“][^\"”\\n]{8,200}[\"”](?=\\s)",
+      "name": "Comment opens by quoting the post",
+      "fix": "Make your own point. The author knows what they wrote."
     }
   ]
 }

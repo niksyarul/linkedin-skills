@@ -383,7 +383,7 @@ your name. If a draft needs a number you have not given, it comes back with
 skills/li-post/hooks.json        21 hook formulas: template, example, what it is for, how it gets ruined
 skills/li-post/events.py         the publication log: one row per live post or comment, counts at day 7
 skills/li-dm/outreach.py         the follow-up ledger: who is due a +4 or +10 follow-up today
-skills/li-human/slop.json        the lexicon: 113 terms, 17 invisible classes, 11 structural tells
+skills/li-human/slop.json        the lexicon: 113 terms, 17 invisible classes, 12 structural tells
 skills/li-human/humanize.py      the three cleaning passes
 skills/li-human/detect.py        the five-check panel
 skills/li-human/provenance.py    fails a draft with a number that is not in your ledger
