@@ -466,7 +466,7 @@ python3 detect.py before.txt after.txt         # prove the delta
 
 Both read `slop.json`, which is the lexicon: 100+ stock words and phrases with
 plain-English replacements, 17 invisible character classes, 11 typographic
-substitutions, and 11 structural tells. It is meant to be edited. If the user
+substitutions, and 12 structural tells. It is meant to be edited. If the user
 has a word they always use that the lexicon strips, remove it from the file.
 
 ## What gets fixed automatically
@@ -509,6 +509,8 @@ a sentence needs judgement:
 - Rocket, fire, bulb, sparkle and dart emoji
 - Hashtag walls
 - Reflex engagement bait: "Thoughts?", "Agree?", "Who else?"
+- A comment that opens by quoting the post back to its author
+- A comment that opens by quoting the post back to its author
 - Uniform sentence length and uniform bullet length
 
 That list is your job. Rewrite each flagged line by hand, keeping the meaning,
@@ -2225,6 +2227,12 @@ The data and scripts the skills use, byte for byte.
       "regex": "(?i)\\b(?:agree\\?|thoughts\\?|who else\\b|am i wrong\\?)\\s*$",
       "name": "Reflex engagement bait",
       "fix": "Ask a question only you could ask, about the specific thing above it."
+    },
+    {
+      "id": "quote-opener",
+      "regex": "^\\s*[\"“][^\"”\\n]{8,200}[\"”](?=\\s)",
+      "name": "Comment opens by quoting the post",
+      "fix": "Make your own point. The author knows what they wrote."
     }
   ]
 }
@@ -2447,6 +2455,12 @@ The data and scripts the skills use, byte for byte.
       "regex": "(?i)\\b(?:agree\\?|thoughts\\?|who else\\b|am i wrong\\?)\\s*$",
       "name": "Reflex engagement bait",
       "fix": "Ask a question only you could ask, about the specific thing above it."
+    },
+    {
+      "id": "quote-opener",
+      "regex": "^\\s*[\"“][^\"”\\n]{8,200}[\"”](?=\\s)",
+      "name": "Comment opens by quoting the post",
+      "fix": "Make your own point. The author knows what they wrote."
     }
   ]
 }
